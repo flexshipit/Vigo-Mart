@@ -1,0 +1,41 @@
+import type { Metadata } from "next";
+import { Hind_Siliguri } from "next/font/google";
+import MetaPixel from "@/components/analytics/MetaPixel";
+import ToasterProvider from "@/components/providers/ToasterProvider";
+import QueryProvider from "@/components/providers/QueryProvider";
+import "./globals.css";
+
+const hindSiliguri = Hind_Siliguri({
+  weight: ["300", "400", "500", "600", "700"],
+  subsets: ["bengali", "latin"],
+  variable: "--font-hind-siliguri",
+  display: "swap",
+});
+
+
+export const metadata: Metadata = {
+  title: "VigoRap — ভিগোরাপ 10 পিস ক্যাপসুল অর্ডার করুন",
+  description:
+    "ভিগোরাপ আয়ুর্বেদিক ক্যাপসুল — 10 পিস মাত্র 600৳, ডেলিভারি 130৳ সারা বাংলাদেশে। ক্যাশ অন ডেলিভারি।",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html
+      lang="bn"
+      className={`${hindSiliguri.variable} h-full scroll-smooth antialiased`}
+    >
+      <body className="flex min-h-full flex-col font-sans">
+        <MetaPixel />
+        <QueryProvider>
+          {children}
+          <ToasterProvider />
+        </QueryProvider>
+      </body>
+    </html>
+  );
+}

@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --primary: #0d7c66;
+  --secondary: #16a085;
+  --gold: #f4b400;
+  --dark: #0f172a;
+  --landing-card-bg: #f0faf7;
+  --landing-card-border: #0d7c66;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-gold: var(--gold);
+  --color-dark: var(--dark);
+  --font-sans: var(--font-hind-siliguri);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-hind-siliguri), system-ui, sans-serif;
+  font-variant-numeric: lining-nums;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+[lang="en"] {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+}
+
+.hero-swiper .swiper-pagination {
+  bottom: 10px !important;
+}
+
+.hero-swiper .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  margin: 0 4px !important;
+  background: #16a085;
+  opacity: 0.7;
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+  background: #0d7c66;
+  opacity: 1;
+}
+
+@layer utilities {
+  .section-padding {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
+
+  .section-container {
+    @apply container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .landing-card {
+    @apply rounded-md border-2 border-primary bg-[#f0faf7] p-4 shadow-sm sm:p-5;
+  }
+
+  .landing-cta {
+    @apply inline-flex w-full items-center justify-center rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-secondary sm:text-base;
+  }
+
+  .accent-badge {
+    @apply inline-block rounded-md border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary;
+  }
+
+  .accent-icon-box {
+    @apply flex items-center justify-center rounded-md bg-primary/10 text-primary;
+  }
+
+  .hero-shape-bg {
+    clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
+  }
+
+  .hero-content-panel {
+    @apply relative rounded-[1.75rem] border border-primary/15 bg-white/90 p-6 shadow-xl shadow-primary/10 backdrop-blur-sm sm:rounded-[2rem] sm:p-8 lg:rounded-[2.5rem];
+  }
+
+  .hero-image-frame {
+    @apply relative overflow-hidden rounded-[1.75rem] border-4 border-white bg-white shadow-2xl shadow-primary/20 sm:rounded-[2rem] lg:rounded-[2.5rem] lg:rounded-tr-[4rem] lg:rounded-bl-[4rem];
+  }
+
+  .hero-blob {
+    border-radius: 58% 42% 62% 38% / 42% 58% 42% 58%;
+  }
+}
