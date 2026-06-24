@@ -18,7 +18,7 @@ export default async function ThankYouPage({ params }: PageProps) {
               <Leaf className="h-5 w-5" />
             </span>
             <span className="text-base font-bold text-slate-900 sm:text-lg">
-              Vigo<span className="text-primary">Rap</span>
+              Vigo<span className="text-primary">Max</span>
             </span>
           </Link>
         </div>

@@ -43,7 +43,7 @@ export default function AdminSidebar({
               <Leaf className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-sm font-bold text-white">VigoRap</p>
+              <p className="text-sm font-bold text-white">VigoMax</p>
               <p className="text-xs text-secondary">Admin Console</p>
             </div>
           </Link>

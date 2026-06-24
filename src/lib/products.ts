@@ -10,21 +10,21 @@ export const DELIVERY_CHARGE = 130;
 
 export const PRODUCTS: Product[] = [
   {
-    packageId: "vigorap-10",
+    packageId: "vigomax-10",
     name: "10 পিস",
     packets: 10,
     price: 600,
     badge: "অরিজিনাল প্রোডাক্ট",
   },
   {
-    packageId: "vigorap-15",
+    packageId: "vigomax-15",
     name: "15 পিস",
     packets: 15,
     price: 900,
     badge: "জনপ্রিয়",
   },
   {
-    packageId: "vigorap-20",
+    packageId: "vigomax-20",
     name: "20 পিস",
     packets: 20,
     price: 1100,
@@ -73,7 +73,14 @@ export const DOSAGE_GUIDELINES = [
 ] as const;
 
 export function getProductByPackageId(packageId: string): Product | undefined {
-  return PRODUCTS.find((product) => product.packageId === packageId);
+  const legacyIds: Record<string, string> = {
+    "vigorap-10": "vigomax-10",
+    "vigorap-15": "vigomax-15",
+    "vigorap-20": "vigomax-20",
+  };
+
+  const resolvedId = legacyIds[packageId] ?? packageId;
+  return PRODUCTS.find((product) => product.packageId === resolvedId);
 }
 
 export const REVIEWS = [
@@ -89,7 +96,7 @@ export const REVIEWS = [
   },
   {
     name: "আরমান",
-    text: "আগে অনেক কিছু ট্রাই করেছি, ভিগোরাপই কাজ করেছে।",
+    text: "আগে অনেক কিছু ট্রাই করেছি, VigoMax-ই কাজ করেছে।",
     rating: 5,
   },
   {

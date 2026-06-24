@@ -76,7 +76,7 @@ export const steadfastAdapter: CourierAdapter = {
       cod_amount: order.total,
       delivery_type: 0,
       total_lot: 1,
-      note: `${order.packageName} — EZ Shop Mystery Box`,
+      note: `${order.packageName} — VigoMax`,
       item_description: order.packageName,
     };
 

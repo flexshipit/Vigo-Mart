@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Package, ShieldCheck, Truck } from "lucide-react";
 import HeroSlider from "@/components/landing/HeroSlider";
 import { DELIVERY_CHARGE, PRODUCTS, getProductPricingSummary } from "@/lib/products";
+import { SITE } from "@/lib/site";
 
 const lowestPrice = Math.min(...PRODUCTS.map((product) => product.price));
 
@@ -38,7 +39,7 @@ export default function Hero() {
               </span>
 
               <h1 className="mt-4 text-[1.65rem] font-bold leading-tight text-dark sm:mt-5 sm:text-4xl lg:text-[2.65rem] xl:text-5xl">
-                ভিগোরাপ —{" "}
+                {SITE.name} —{" "}
                 <span className="text-primary">আয়ুর্বেদিক সমাধান</span>
               </h1>
 

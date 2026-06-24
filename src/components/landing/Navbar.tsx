@@ -31,7 +31,7 @@ export default function Navbar() {
             <Leaf className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
           <span className="truncate text-base font-bold text-dark sm:text-lg">
-            Vigo<span className="text-primary">Rap</span>
+            Vigo<span className="text-primary">Max</span>
           </span>
         </a>
 

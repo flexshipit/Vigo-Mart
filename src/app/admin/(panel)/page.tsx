@@ -59,7 +59,7 @@ export default function AdminDashboardPage() {
           <div>
             <p className="text-sm font-medium text-primary">Store Performance</p>
             <h3 className="mt-1 text-xl font-bold text-slate-900 sm:text-2xl">
-              Your VigoRap store is live
+              Your VigoMax store is live
             </h3>
             <p className="mt-2 max-w-xl text-sm text-slate-600">
               Monitor confirmed orders, revenue, and customer activity from this

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { Check } from "lucide-react";
 import { BENEFITS, SATISFACTION_GUARANTEE } from "@/lib/products";
+import { SITE } from "@/lib/site";
 import { SITE_IMAGES } from "@/lib/images";
 
 export default function Benefits() {
@@ -53,7 +54,7 @@ export default function Benefits() {
               >
                 <Image
                   src={src}
-                  alt={`ভিগোরাপ ${index + 1}`}
+                  alt={`${SITE.name} ${index + 1}`}
                   fill
                   sizes="120px"
                   className="object-cover"

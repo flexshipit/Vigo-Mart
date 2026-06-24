@@ -58,7 +58,7 @@ export default function AdminLoginPage() {
           <span className="mb-3 flex h-11 w-11 items-center justify-center rounded-md bg-primary text-white">
             <Leaf className="h-6 w-6" />
           </span>
-          <p className="text-lg font-bold text-slate-900">VigoRap</p>
+          <p className="text-lg font-bold text-slate-900">VigoMax</p>
           <p className="text-sm text-primary">Admin Console</p>
         </div>
 

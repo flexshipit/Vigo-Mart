@@ -146,7 +146,7 @@ export default function NotFound() {
 
       <footer className="relative z-10 border-t border-slate-200 bg-white/80 py-4 text-center">
         <p className="text-xs text-slate-500 sm:text-sm">
-          © {new Date().getFullYear()} VigoRap
+          © {new Date().getFullYear()} VigoMax
         </p>
       </footer>
     </div>

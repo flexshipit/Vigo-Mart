@@ -1,4 +1,5 @@
 import { Leaf } from "lucide-react";
+import { SITE } from "@/lib/site";
 
 export default function Footer() {
   return (
@@ -10,12 +11,19 @@ export default function Footer() {
               <Leaf className="h-4 w-4" />
             </span>
             <span className="text-base font-bold text-dark sm:text-lg">
-              Vigo<span className="text-primary">Rap</span>
+              Vigo<span className="text-primary">Max</span>
             </span>
           </div>
 
           <p className="max-w-sm text-xs text-slate-500 sm:text-sm">
-            © {new Date().getFullYear()} VigoRap. সর্বস্বত্ব সংরক্ষিত।
+            © {new Date().getFullYear()} {SITE.name}. সর্বস্বত্ব সংরক্ষিত।
+            <br />
+            <a
+              href={SITE.url}
+              className="mt-1 inline-block text-primary hover:underline"
+            >
+              {SITE.domain}
+            </a>
           </p>
 
           <a
