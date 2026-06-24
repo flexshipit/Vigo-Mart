@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Check, Sparkles } from "lucide-react";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { DELIVERY_CHARGE, PRODUCTS } from "@/lib/products";
+import { DELIVERY_CHARGE, getProductPricingSummary, PRODUCTS } from "@/lib/products";
 
 const FEATURES = [
   "অরিজিনাল আয়ুর্বেদিক ক্যাপসুল",
@@ -18,10 +18,10 @@ export default function ProductCards() {
         <SectionHeader
           badge="প্রোডাক্ট"
           title="আপনার প্যাকেজ বেছে নিন"
-          description={`10 পিস ক্যাপসুল — মাত্র 600৳ | ডেলিভারি ${DELIVERY_CHARGE}৳ (সারা বাংলাদেশ)`}
+          description={`${getProductPricingSummary()} | ডেলিভারি ${DELIVERY_CHARGE}৳ (সারা বাংলাদেশ)`}
         />
 
-        <div className="mt-8 flex justify-center sm:mt-10 lg:mt-12">
+        <div className="mt-8 grid gap-4 sm:mt-10 sm:grid-cols-2 sm:gap-5 lg:mt-12 lg:grid-cols-3 lg:gap-6">
           {PRODUCTS.map((product, i) => (
             <motion.article
               key={product.packageId}
@@ -29,7 +29,7 @@ export default function ProductCards() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="relative flex h-full w-full max-w-sm flex-col rounded-md border-2 border-primary/30 bg-gradient-to-b from-primary/5 to-white p-5 shadow-sm ring-1 ring-primary/10 transition-shadow hover:shadow-md sm:max-w-md sm:p-6"
+              className="relative flex h-full flex-col rounded-md border-2 border-primary/30 bg-gradient-to-b from-primary/5 to-white p-5 shadow-sm ring-1 ring-primary/10 transition-shadow hover:shadow-md sm:p-6"
             >
               {product.badge && (
                 <span className="absolute -top-2.5 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-md bg-primary px-3 py-1 text-[11px] font-bold text-white sm:text-xs">
@@ -43,11 +43,8 @@ export default function ProductCards() {
               </div>
 
               <h3 className="text-base font-semibold leading-snug text-slate-900 sm:text-lg">
-                {product.name}
+                <span lang="en">{product.packets}</span> পিস
               </h3>
-              <p className="mt-1 text-xs text-slate-500 sm:text-sm">
-                <span lang="en">{product.packets}</span> টি ক্যাপসুল
-              </p>
 
               <div className="mt-3 flex items-baseline gap-1 sm:mt-4">
                 <span lang="en" className="text-2xl font-bold text-primary sm:text-3xl">

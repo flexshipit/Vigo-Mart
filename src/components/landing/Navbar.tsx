@@ -7,6 +7,7 @@ import { Leaf, Menu, X } from "lucide-react";
 const NAV_LINKS = [
   { label: "প্রোডাক্ট", href: "#products" },
   { label: "উপকারিতা", href: "#benefits" },
+  { label: "সেবনবিধি", href: "#dosage" },
   { label: "কিভাবে কাজ করে", href: "#how-it-works" },
   { label: "রিভিউ", href: "#reviews" },
   { label: "নীতিমালা", href: "#policy" },

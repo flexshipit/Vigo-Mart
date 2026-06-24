@@ -174,10 +174,7 @@ export default function OrderForm() {
                       />
                       <div className="min-w-0">
                         <p className="text-sm font-medium leading-snug text-slate-900">
-                          {product.name}
-                        </p>
-                        <p className="mt-0.5 text-xs text-slate-500">
-                          <span lang="en">{product.packets}</span> পিস ক্যাপসুল
+                          <span lang="en">{product.packets}</span> পিস
                         </p>
                       </div>
                     </div>

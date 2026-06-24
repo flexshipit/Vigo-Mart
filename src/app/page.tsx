@@ -2,6 +2,7 @@ import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
 import TrustBar from "@/components/landing/TrustBar";
 import Benefits from "@/components/landing/Benefits";
+import DosageGuide from "@/components/landing/DosageGuide";
 import ProductCards from "@/components/landing/ProductCards";
 import HowItWorks from "@/components/landing/HowItWorks";
 import OrderForm from "@/components/landing/OrderForm";
@@ -17,6 +18,7 @@ export default function Home() {
         <Hero />
         <TrustBar />
         <Benefits />
+        <DosageGuide />
         <ProductCards />
         <HowItWorks />
         <OrderForm />

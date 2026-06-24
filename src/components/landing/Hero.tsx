@@ -3,12 +3,12 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Package, ShieldCheck, Truck } from "lucide-react";
 import HeroSlider from "@/components/landing/HeroSlider";
-import { DELIVERY_CHARGE, PRODUCTS } from "@/lib/products";
+import { DELIVERY_CHARGE, PRODUCTS, getProductPricingSummary } from "@/lib/products";
 
-const product = PRODUCTS[0];
+const lowestPrice = Math.min(...PRODUCTS.map((product) => product.price));
 
 const STATS = [
-  { icon: Package, label: "10 পিস ক্যাপসুল", sub: "প্রতি বক্সে" },
+  { icon: Package, label: "10–20 পিস", sub: "প্যাকেজ অপশন" },
   { icon: Truck, label: "2–4 দিন", sub: "হোম ডেলিভারি" },
   { icon: ShieldCheck, label: "ক্যাশ অন", sub: "ডেলিভারিতে পেমেন্ট" },
 ];
@@ -33,12 +33,12 @@ export default function Hero() {
           >
             <div className="hero-content-panel text-center lg:text-left">
               <span className="accent-badge">
-                মাত্র <span lang="en">{product.price}</span>৳ —{" "}
-                <span lang="en">10</span> পিস ক্যাপসুল
+                <span lang="en">{lowestPrice}</span>৳ থেকে শুরু —{" "}
+                {getProductPricingSummary()}
               </span>
 
               <h1 className="mt-4 text-[1.65rem] font-bold leading-tight text-dark sm:mt-5 sm:text-4xl lg:text-[2.65rem] xl:text-5xl">
-                ভিগোরাপ ক্যাপসুল —{" "}
+                ভিগোরাপ —{" "}
                 <span className="text-primary">আয়ুর্বেদিক সমাধান</span>
               </h1>
 

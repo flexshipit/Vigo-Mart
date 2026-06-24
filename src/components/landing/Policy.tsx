@@ -3,7 +3,11 @@
 import { motion } from "framer-motion";
 import { AlertCircle, RefreshCw, Shield } from "lucide-react";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { DELIVERY_CHARGE, SATISFACTION_GUARANTEE } from "@/lib/products";
+import {
+  DELIVERY_CHARGE,
+  SATISFACTION_GUARANTEE,
+  getProductPricingSummary,
+} from "@/lib/products";
 
 const POLICIES = [
   {
@@ -31,7 +35,7 @@ const POLICIES = [
     items: [
       "অর্ডার করার আগে নীতিমালা সম্পূর্ণ পড়ুন",
       "সঠিক তথ্য দিয়ে অর্ডার করুন",
-      "10 পিস ক্যাপসুল — মাত্র 600৳",
+      getProductPricingSummary(),
       "জেনে ও বুঝে অর্ডার করুন",
     ],
   },

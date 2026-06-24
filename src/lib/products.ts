@@ -11,12 +11,32 @@ export const DELIVERY_CHARGE = 130;
 export const PRODUCTS: Product[] = [
   {
     packageId: "vigorap-10",
-    name: "ভিগোরাপ — 10 পিস ক্যাপসুল",
+    name: "10 পিস",
     packets: 10,
     price: 600,
     badge: "অরিজিনাল প্রোডাক্ট",
   },
+  {
+    packageId: "vigorap-15",
+    name: "15 পিস",
+    packets: 15,
+    price: 900,
+    badge: "জনপ্রিয়",
+  },
+  {
+    packageId: "vigorap-20",
+    name: "20 পিস",
+    packets: 20,
+    price: 1100,
+    badge: "সেরা ভ্যালু",
+  },
 ];
+
+export function getProductPricingSummary(): string {
+  return PRODUCTS.map((product) => `${product.packets} পিস — ${product.price}৳`).join(
+    " | "
+  );
+}
 
 export const BENEFITS = [
   "ইহা ব্যবহারে 35-40 মিনিট স্ত্রী মিলন করতে পারবেন।",
@@ -32,6 +52,25 @@ export const BENEFITS = [
 
 export const SATISFACTION_GUARANTEE =
   "যদি নির্দিষ্ট সময়ের মধ্যে আমরা আমাদের প্রতিশ্রুতি অনুযায়ী কাজ বা ফলাফল বুঝিয়ে দিতে না পারি, তবে কোনো প্রশ্ন ছাড়াই আপনার দেওয়া টাকা সম্পূর্ণ ফেরত (Refund) দেওয়া হবে।";
+
+export const DOSAGE_GUIDELINES = [
+  {
+    label: "মাত্রা",
+    text: "দৈনিক 1টি ক্যাপসুল।",
+  },
+  {
+    label: "সময়",
+    text: "সাধারণত রাতে ঘুমানোর আগে অথবা চিকিৎসকের পরামর্শ অনুযায়ী দিনে 1 থেকে 2 বার।",
+  },
+  {
+    label: "সহায়ক উপাদান",
+    text: "এটি হালকা গরম দুধ অথবা কুসুম গরম পানির সাথে সেবন করলে সবচেয়ে ভালো কাজ করে।",
+  },
+  {
+    label: "খাবারের নিয়ম",
+    text: "অবশ্যই ভরা পেটে (রাতের বা দুপুরের খাবারের পর) সেবন করতে হবে। খালি পেটে খাওয়া উচিত নয়।",
+  },
+] as const;
 
 export function getProductByPackageId(packageId: string): Product | undefined {
   return PRODUCTS.find((product) => product.packageId === packageId);

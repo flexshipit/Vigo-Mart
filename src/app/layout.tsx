@@ -14,9 +14,9 @@ const hindSiliguri = Hind_Siliguri({
 
 
 export const metadata: Metadata = {
-  title: "VigoRap — ভিগোরাপ 10 পিস ক্যাপসুল অর্ডার করুন",
+  title: "VigoRap — ভিগোরাপ অর্ডার করুন",
   description:
-    "ভিগোরাপ আয়ুর্বেদিক ক্যাপসুল — 10 পিস মাত্র 600৳, ডেলিভারি 130৳ সারা বাংলাদেশে। ক্যাশ অন ডেলিভারি।",
+    "ভিগোরাপ আয়ুর্বেদিক — 10 পিস 600৳, 15 পিস 900৳, 20 পিস 1100৳। ডেলিভারি 130৳ সারা বাংলাদেশে। ক্যাশ অন ডেলিভারি।",
 };
 
 export default function RootLayout({

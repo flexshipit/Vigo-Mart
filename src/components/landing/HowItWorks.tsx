@@ -3,14 +3,14 @@
 import { motion } from "framer-motion";
 import { ClipboardList, Package, Truck } from "lucide-react";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { DELIVERY_CHARGE } from "@/lib/products";
+import { DELIVERY_CHARGE, getProductPricingSummary } from "@/lib/products";
 
 const STEPS = [
   {
     icon: ClipboardList,
     step: "01",
     title: "অর্ডার করুন",
-    desc: "অর্ডার ফর্ম পূরণ করুন — 10 পিস ভিগোরাপ ক্যাপসুল মাত্র 600৳।",
+    desc: `অর্ডার ফর্ম পূরণ করুন — ${getProductPricingSummary()}।`,
   },
   {
     icon: Truck,
@@ -22,7 +22,7 @@ const STEPS = [
     icon: Package,
     step: "03",
     title: "ব্যবহার শুরু করুন",
-    desc: "ক্যাশ অন ডেলিভারিতে পেমেন্ট করুন এবং ভিগোরাপ ক্যাপসুল ব্যবহার শুরু করুন!",
+    desc: "ক্যাশ অন ডেলিভারিতে পেমেন্ট করুন এবং ব্যবহার শুরু করুন!",
   },
 ];
 
@@ -33,7 +33,7 @@ export default function HowItWorks() {
         <SectionHeader
           badge="প্রক্রিয়া"
           title="কিভাবে কাজ করে"
-          description="মাত্র 3টি সহজ ধাপে আপনার ভিগোরাপ ক্যাপসুল পেয়ে যান"
+          description="মাত্র 3টি সহজ ধাপে আপনার অর্ডার পেয়ে যান"
         />
 
         <div className="mt-8 grid gap-4 sm:mt-10 sm:grid-cols-2 sm:gap-5 lg:mt-12 lg:grid-cols-3 lg:gap-6">
