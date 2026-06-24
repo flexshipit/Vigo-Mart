@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Hind_Siliguri } from "next/font/google";
 import MetaPixel from "@/components/analytics/MetaPixel";
+import WhatsAppFloat from "@/components/landing/WhatsAppFloat";
 import ToasterProvider from "@/components/providers/ToasterProvider";
 import QueryProvider from "@/components/providers/QueryProvider";
 import "./globals.css";
@@ -33,6 +34,7 @@ export default function RootLayout({
         <MetaPixel />
         <QueryProvider>
           {children}
+          <WhatsAppFloat />
           <ToasterProvider />
         </QueryProvider>
       </body>
