@@ -3,6 +3,7 @@ import Hero from "@/components/landing/Hero";
 import TrustBar from "@/components/landing/TrustBar";
 import Benefits from "@/components/landing/Benefits";
 import DosageGuide from "@/components/landing/DosageGuide";
+import Disclaimer from "@/components/landing/Disclaimer";
 import ProductCards from "@/components/landing/ProductCards";
 import HowItWorks from "@/components/landing/HowItWorks";
 import OrderForm from "@/components/landing/OrderForm";
@@ -19,6 +20,7 @@ export default function Home() {
         <TrustBar />
         <Benefits />
         <DosageGuide />
+        <Disclaimer />
         <ProductCards />
         <HowItWorks />
         <OrderForm />
