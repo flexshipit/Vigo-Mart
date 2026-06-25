@@ -1,5 +1,5 @@
-export const WHATSAPP_NUMBER_DISPLAY = "01626-002281";
-export const WHATSAPP_NUMBER_E164 = "8801626002281";
+export const WHATSAPP_NUMBER_DISPLAY = "01778-016039";
+export const WHATSAPP_NUMBER_E164 = "8801778016039";
 
 const DEFAULT_WHATSAPP_MESSAGE =
   "হ্যালো, আমি VigoMax সম্পর্কে জানতে চাই। (ডাবল অর্ডার / প্রশ্ন)";

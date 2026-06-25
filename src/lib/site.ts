@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const SITE_URL = "https://vigomaxbd.store";
 
 export const SITE = {
-  name: "VigoMax",
+  name: "ManPower",
   nameBn: "ভিগোম্যাক্স",
   domain: "vigomaxbd.store",
   url: SITE_URL,
