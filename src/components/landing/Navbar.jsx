@@ -92,12 +92,12 @@ export default function Navbar() {
             fontSize: '1.25rem',
           }}
         >
-          Vigor
+          
           <Box
             component="span"
             sx={{ color: '#0D7C66' }}
           >
-            Q
+            ManPower
           </Box>
         </Typography>
       </Box>
@@ -207,14 +207,14 @@ export default function Navbar() {
                   fontSize: '1.3rem',
                 }}
               >
-                Vigor
+                ManPower
                 <Box
                   component="span"
                   sx={{
                     color: '#0D7C66',
                   }}
                 >
-                  Q
+                  M
                 </Box>
               </Typography>
             </Box>
