@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Pill } from "lucide-react";
+import { Cookie } from "lucide-react";
 import { DOSAGE_GUIDELINES } from "@/lib/products";
 
 export default function DosageGuide() {
@@ -17,7 +17,7 @@ export default function DosageGuide() {
         >
           <div className="flex items-center justify-center gap-2">
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <Pill className="h-4 w-4" />
+              <Cookie className="h-4 w-4" />
             </span>
             <h2 className="text-center text-lg font-bold text-dark sm:text-xl">
               সাধারণ সেবনবিধি

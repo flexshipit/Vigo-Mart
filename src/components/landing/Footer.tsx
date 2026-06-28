@@ -1,4 +1,5 @@
 import { Leaf } from "lucide-react";
+import BrandLogo from "@/components/ui/BrandLogo";
 import { SITE } from "@/lib/site";
 
 export default function Footer() {
@@ -10,20 +11,18 @@ export default function Footer() {
             <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-white">
               <Leaf className="h-4 w-4" />
             </span>
-            <span className="text-base font-bold text-dark sm:text-lg">
-              Man<span className="text-primary">Power</span>
-            </span>
+            <BrandLogo />
           </div>
 
           <p className="max-w-sm text-xs text-slate-500 sm:text-sm">
             © {new Date().getFullYear()} {SITE.name}. সর্বস্বত্ব সংরক্ষিত।
             <br />
-            {/* <a
+            <a
               href={SITE.url}
               className="mt-1 inline-block text-primary hover:underline"
             >
               {SITE.domain}
-            </a> */}
+            </a>
           </p>
 
           <a

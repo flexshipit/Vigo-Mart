@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, Home, Leaf, Search } from "lucide-react";
+import BrandLogo from "@/components/ui/BrandLogo";
+import { SITE } from "@/lib/site";
 
 const floatingItems = [
   { emoji: "💊", x: "12%", y: "18%", delay: 0 },
@@ -47,9 +49,7 @@ export default function NotFound() {
             <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-white sm:h-9 sm:w-9">
               <Leaf className="h-4 w-4 sm:h-5 sm:w-5" />
             </span>
-            <span className="text-base font-bold text-slate-900 sm:text-lg">
-              Vigo<span className="text-primary">Rap</span>
-            </span>
+            <BrandLogo className="text-base font-bold text-slate-900 sm:text-lg" />
           </Link>
         </div>
       </header>
@@ -146,7 +146,7 @@ export default function NotFound() {
 
       <footer className="relative z-10 border-t border-slate-200 bg-white/80 py-4 text-center">
         <p className="text-xs text-slate-500 sm:text-sm">
-          © {new Date().getFullYear()} VigoMax
+          © {new Date().getFullYear()} {SITE.name}
         </p>
       </footer>
     </div>

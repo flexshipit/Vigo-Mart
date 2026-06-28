@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Leaf } from "lucide-react";
+import BrandLogo from "@/components/ui/BrandLogo";
 import ThankYouContent from "@/components/thank-you/ThankYouContent";
 
 type PageProps = {
@@ -17,9 +18,7 @@ export default async function ThankYouPage({ params }: PageProps) {
             <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-white">
               <Leaf className="h-5 w-5" />
             </span>
-            <span className="text-base font-bold text-slate-900 sm:text-lg">
-              Vigo<span className="text-primary">Max</span>
-            </span>
+            <BrandLogo className="text-base font-bold text-slate-900 sm:text-lg" />
           </Link>
         </div>
       </header>

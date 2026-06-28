@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Leaf, Menu, X } from "lucide-react";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 const NAV_LINKS = [
   { label: "প্রোডাক্ট", href: "#products" },
@@ -30,9 +31,7 @@ export default function Navbar() {
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary text-white sm:h-9 sm:w-9">
             <Leaf className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
-          <span className="truncate text-base font-bold text-dark sm:text-lg">
-            Man<span className="text-primary">Power</span>
-          </span>
+          <BrandLogo />
         </a>
 
         <ul className="hidden items-center gap-6 lg:flex xl:gap-8">
@@ -82,25 +81,26 @@ export default function Navbar() {
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="absolute left-0 right-0 z-50 border-b border-slate-200 bg-white shadow-lg lg:hidden"
+              transition={{ duration: 0.2 }}
+              className="fixed left-0 right-0 top-14 z-50 border-b border-slate-200 bg-white shadow-lg sm:top-16 lg:hidden"
             >
-              <ul className="section-container flex flex-col gap-1 py-4">
+              <ul className="section-container flex flex-col gap-1 py-3">
                 {NAV_LINKS.map((link) => (
                   <li key={link.href}>
                     <a
                       href={link.href}
                       onClick={() => setOpen(false)}
-                      className="block rounded-md px-3 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-primary"
+                      className="block rounded-md px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-primary/5 hover:text-primary"
                     >
                       {link.label}
                     </a>
                   </li>
                 ))}
-                <li className="pt-2">
+                <li className="mt-2 border-t border-slate-100 pt-2">
                   <a
                     href="#order"
                     onClick={() => setOpen(false)}
-                    className="block rounded-md bg-primary px-3 py-3 text-center text-sm font-semibold text-white"
+                    className="block rounded-md bg-primary px-3 py-2.5 text-center text-sm font-semibold text-white"
                   >
                     অর্ডার করুন
                   </a>

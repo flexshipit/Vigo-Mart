@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ExternalLink, Leaf, LogOut, X } from "lucide-react";
+import { SITE } from "@/lib/site";
 import AdminAvatar from "@/components/admin/AdminAvatar";
 import { ADMIN_NAV } from "@/lib/admin/navigation";
 
@@ -43,7 +44,7 @@ export default function AdminSidebar({
               <Leaf className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-sm font-bold text-white">VigoMax</p>
+              <p className="text-sm font-bold text-white">{SITE.name}</p>
               <p className="text-xs text-secondary">Admin Console</p>
             </div>
           </Link>

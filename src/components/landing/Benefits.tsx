@@ -3,8 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Check } from "lucide-react";
-import { BENEFITS, SATISFACTION_GUARANTEE } from "@/lib/products";
-import { SITE } from "@/lib/site";
+import { BENEFITS, INGREDIENTS, INGREDIENTS_TITLE, PRODUCT_NAME_BN, SATISFACTION_GUARANTEE } from "@/lib/products";
 import { SITE_IMAGES } from "@/lib/images";
 
 export default function Benefits() {
@@ -23,7 +22,7 @@ export default function Benefits() {
           </a>
 
           <h2 className="mt-5 text-center text-lg font-bold text-dark sm:mt-6 sm:text-xl">
-            উপকারিতা
+            {PRODUCT_NAME_BN} — উপকারিতা
           </h2>
 
           <ul className="mt-4 divide-y divide-slate-200 sm:mt-5">
@@ -54,7 +53,7 @@ export default function Benefits() {
               >
                 <Image
                   src={src}
-                  alt={`${SITE.name} ${index + 1}`}
+                  alt={`${PRODUCT_NAME_BN} ${index + 1}`}
                   fill
                   sizes="120px"
                   className="object-cover"
@@ -62,6 +61,38 @@ export default function Benefits() {
               </div>
             ))}
           </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-20px" }}
+          transition={{ duration: 0.4, delay: 0.08 }}
+          className="landing-card mx-auto mt-4 max-w-xl sm:mt-5"
+        >
+          <h3 className="rounded-md bg-primary px-4 py-2.5 text-center text-sm font-bold text-white sm:text-base">
+            {INGREDIENTS_TITLE}
+          </h3>
+
+          <ul className="mt-4 divide-y divide-slate-200 sm:mt-5">
+            {INGREDIENTS.map((item, i) => (
+              <motion.li
+                key={item}
+                initial={{ opacity: 0, x: -8 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.04 }}
+                className="flex items-start gap-3 py-3 first:pt-0 last:pb-0 sm:py-3.5"
+              >
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-white">
+                  <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                </span>
+                <p className="text-sm leading-relaxed text-slate-800 sm:text-[15px]">
+                  {item}
+                </p>
+              </motion.li>
+            ))}
+          </ul>
         </motion.div>
 
         <motion.div

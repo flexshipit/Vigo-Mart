@@ -76,7 +76,7 @@ export const steadfastAdapter: CourierAdapter = {
       cod_amount: order.total,
       delivery_type: 0,
       total_lot: 1,
-      note: `${order.packageName} — VigoMax`,
+      note: `${order.packageName} — AC Chocolate`,
       item_description: order.packageName,
     };
 

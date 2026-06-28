@@ -5,6 +5,7 @@ import OrderAmountBreakdown from "@/components/admin/OrderAmountBreakdown";
 import OrderStatusBadge from "@/components/admin/OrderStatusBadge";
 import { useCourierHistory } from "@/hooks/useAdmin";
 import type { CourierPhoneHistoryResult } from "@/types/courier";
+import { SITE } from "@/lib/site";
 
 type CourierHistoryModalProps = {
   phone: string;
@@ -129,7 +130,7 @@ export default function CourierHistoryModal({
           {isLoading && (
             <div className="flex items-center gap-2 py-8 text-sm text-slate-500">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Loading courier history from VigoMax, Pathao and Steadfast...
+              Loading courier history from {SITE.name}, Pathao and Steadfast...
             </div>
           )}
 
@@ -149,13 +150,13 @@ export default function CourierHistoryModal({
                   </p>
                 </div>
                 <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
-                  <p className="text-xs text-slate-500">VigoMax Orders</p>
+                  <p className="text-xs text-slate-500">{SITE.name} Orders</p>
                   <p lang="en" className="mt-1 text-lg font-bold text-slate-900">
                     {data.totalOrders}
                   </p>
                 </div>
                 <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
-                  <p className="text-xs text-slate-500">VigoMax Shipments</p>
+                  <p className="text-xs text-slate-500">{SITE.name} Shipments</p>
                   <p lang="en" className="mt-1 text-lg font-bold text-primary">
                     {data.courierShipments}
                   </p>
@@ -177,12 +178,12 @@ export default function CourierHistoryModal({
 
               <div>
                 <h3 className="mb-3 text-sm font-semibold text-slate-900">
-                  VigoMax Order History
+                  {SITE.name} Order History
                 </h3>
 
                 {data.orders.length === 0 ? (
                   <p className="rounded-md border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
-                    No VigoMax orders found for <span lang="en">{data.phone}</span>
+                    No {SITE.name} orders found for <span lang="en">{data.phone}</span>
                   </p>
                 ) : (
                   <div className="space-y-3">

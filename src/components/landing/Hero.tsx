@@ -3,13 +3,12 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Package, ShieldCheck, Truck } from "lucide-react";
 import HeroSlider from "@/components/landing/HeroSlider";
-import { DELIVERY_CHARGE, PRODUCTS, getProductPricingSummary } from "@/lib/products";
-import { SITE } from "@/lib/site";
+import { DELIVERY_CHARGE, PRODUCTS, getProductPricingSummary, PRODUCT_DESCRIPTION, PRODUCT_NAME, PRODUCT_NAME_BN, PRODUCT_TAGLINE } from "@/lib/products";
 
 const lowestPrice = Math.min(...PRODUCTS.map((product) => product.price));
 
 const STATS = [
-  { icon: Package, label: "10–20 পিস", sub: "প্যাকেজ অপশন" },
+  { icon: Package, label: "8–20 পিস", sub: "প্যাকেজ অপশন" },
   { icon: Truck, label: "2–4 দিন", sub: "হোম ডেলিভারি" },
   { icon: ShieldCheck, label: "ক্যাশ অন", sub: "ডেলিভারিতে পেমেন্ট" },
 ];
@@ -39,12 +38,18 @@ export default function Hero() {
               </span>
 
               <h1 className="mt-4 text-[1.65rem] font-bold leading-tight text-dark sm:mt-5 sm:text-4xl lg:text-[2.65rem] xl:text-5xl">
-                {SITE.name} —{" "}
-                <span className="text-primary">আয়ুর্বেদিক সমাধান</span>
+                <span lang="en">{PRODUCT_NAME}</span>
+                <span className="block text-primary sm:mt-1 lg:inline lg:before:content-['_—_']">
+                  {PRODUCT_NAME_BN}
+                </span>
               </h1>
 
+              <p className="mx-auto mt-2 text-sm font-medium text-primary sm:text-base lg:mx-0">
+                {PRODUCT_TAGLINE}
+              </p>
+
               <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:mt-5 sm:text-base lg:mx-0 lg:text-lg">
-                অরিজিনাল আয়ুর্বেদিক মেডিসিন। সম্পূর্ণ ক্যাশ অন ডেলিভারি,
+                {PRODUCT_DESCRIPTION} সম্পূর্ণ ক্যাশ অন ডেলিভারি,
                 সারা বাংলাদেশে হোম ডেলিভারি মাত্র{" "}
                 <span lang="en">{DELIVERY_CHARGE}</span>৳।
               </p>

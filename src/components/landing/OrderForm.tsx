@@ -14,8 +14,7 @@ import {
   getMetaCookies,
   trackBrowserPurchase,
 } from "@/lib/meta/client";
-import { DELIVERY_CHARGE, PRODUCTS } from "@/lib/products";
-import { SITE } from "@/lib/site";
+import { DELIVERY_CHARGE, PRODUCTS, PRODUCT_NAME_BN } from "@/lib/products";
 
 type FormData = {
   fullName: string;
@@ -123,7 +122,7 @@ export default function OrderForm() {
           <div className="relative aspect-[16/9] w-full">
             <Image
               src={SITE_IMAGES.orderBanner}
-              alt={`${SITE.name} অর্ডার`}
+              alt={`${PRODUCT_NAME_BN} অর্ডার`}
               fill
               sizes="100vw"
               className="object-cover"
@@ -278,7 +277,7 @@ export default function OrderForm() {
               <div className="relative mb-4 hidden aspect-[4/3] overflow-hidden rounded-md lg:block">
                 <Image
                   src={SITE_IMAGES.orderBanner}
-                  alt={`${SITE.name} অর্ডার`}
+                  alt={`${PRODUCT_NAME_BN} অর্ডার`}
                   fill
                   sizes="(max-width: 1024px) 100vw, 320px"
                   className="object-cover"

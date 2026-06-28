@@ -3,10 +3,10 @@
 import { motion } from "framer-motion";
 import { Check, Sparkles } from "lucide-react";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { DELIVERY_CHARGE, getProductPricingSummary, PRODUCTS } from "@/lib/products";
+import { DELIVERY_CHARGE, getProductPricingSummary, PRODUCT_NAME, PRODUCT_NAME_BN, PRODUCTS } from "@/lib/products";
 
 const FEATURES = [
-  "অরিজিনাল আয়ুর্বেদিক ক্যাপসুল",
+  `অরিজিনাল ${PRODUCT_NAME} (${PRODUCT_NAME_BN})`,
   "সারা বাংলাদেশে হোম ডেলিভারি",
   "100% সন্তুষ্টি বা টাকা ফেরত গ্যারান্টি",
 ];
@@ -17,7 +17,7 @@ export default function ProductCards() {
       <div className="section-container">
         <SectionHeader
           badge="প্রোডাক্ট"
-          title="আপনার প্যাকেজ বেছে নিন"
+          title={`${PRODUCT_NAME_BN} — প্যাকেজ বেছে নিন`}
           description={`${getProductPricingSummary()} | ডেলিভারি ${DELIVERY_CHARGE}৳ (সারা বাংলাদেশ)`}
         />
 
@@ -39,7 +39,7 @@ export default function ProductCards() {
               )}
 
               <div className="accent-icon-box mb-4 h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl">
-                💊
+                🍫
               </div>
 
               <h3 className="text-base font-semibold leading-snug text-slate-900 sm:text-lg">

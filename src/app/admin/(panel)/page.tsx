@@ -19,6 +19,7 @@ import OrderStatusBadge from "@/components/admin/OrderStatusBadge";
 import DashboardCharts from "@/components/admin/charts/DashboardCharts";
 import { useAdminOrders } from "@/hooks/useAdmin";
 import { getAdminPageMeta } from "@/lib/admin/navigation";
+import { SITE } from "@/lib/site";
 
 export default function AdminDashboardPage() {
   const { data, isLoading, isError, refetch, isFetching } = useAdminOrders({
@@ -59,7 +60,7 @@ export default function AdminDashboardPage() {
           <div>
             <p className="text-sm font-medium text-primary">Store Performance</p>
             <h3 className="mt-1 text-xl font-bold text-slate-900 sm:text-2xl">
-              Your VigoMax store is live
+              Your {SITE.name} store is live
             </h3>
             <p className="mt-2 max-w-xl text-sm text-slate-600">
               Monitor confirmed orders, revenue, and customer activity from this
