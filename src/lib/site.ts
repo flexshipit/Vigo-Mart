@@ -4,21 +4,17 @@ import { getProductPricingSummary, PRODUCT_DESCRIPTION, PRODUCT_NAME, PRODUCT_NA
 export const SITE_URL = "https://vigomaxbd.store";
 
 export const SITE = {
-  name: "AC Chocolate",
-  nameBn: "এসি চকলেট",
-  brandLead: "AC",
+  name: PRODUCT_NAME,
+  nameBn: PRODUCT_NAME_BN,
+  brandLead: "American Herbal",
   brandAccent: "Chocolate",
   domain: "vigomaxbd.store",
   url: SITE_URL,
-  productName: PRODUCT_NAME,
-  productNameBn: PRODUCT_NAME_BN,
   tagline: PRODUCT_NAME_BN,
   description: `${PRODUCT_NAME} (${PRODUCT_NAME_BN}) — ${PRODUCT_DESCRIPTION} ${getProductPricingSummary()}। সারা বাংলাদেশে হোম ডেলিভারি 130৳। ক্যাশ অন ডেলিভারি ও 100% সন্তুষ্টি গ্যারান্টি।`,
   keywords: [
-    "American Chocolate",
-    "আমেরিকান চকলেট",
-    "AC Chocolate",
-    "এসি চকলেট",
+    "American Herbal Chocolate",
+    "আমেরিকান হারবাল চকলেট",
     "vigomaxbd",
     "হারবাল চকলেট বাংলাদেশ",
     "অরিজিনাল চকলেট বাংলাদেশ",
@@ -32,7 +28,7 @@ export const SITE = {
 export const siteMetadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${PRODUCT_NAME} — ${PRODUCT_NAME_BN} অর্ডার করুন | ${SITE.name}`,
+    default: `${PRODUCT_NAME} — ${PRODUCT_NAME_BN} অর্ডার করুন`,
     template: `%s | ${SITE.name}`,
   },
   description: SITE.description,

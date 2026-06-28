@@ -10,6 +10,7 @@ import {
 } from "@/lib/courier/utils";
 import { formatCourierStatus } from "@/lib/courier/statusLabels";
 import type { CourierAdapter } from "@/lib/couriers";
+import { PRODUCT_NAME } from "@/lib/products";
 
 function getConfig() {
   return {
@@ -76,7 +77,7 @@ export const steadfastAdapter: CourierAdapter = {
       cod_amount: order.total,
       delivery_type: 0,
       total_lot: 1,
-      note: `${order.packageName} — AC Chocolate`,
+      note: `${order.packageName} — ${PRODUCT_NAME}`,
       item_description: order.packageName,
     };
 

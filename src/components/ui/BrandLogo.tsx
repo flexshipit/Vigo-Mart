@@ -6,7 +6,7 @@ type BrandLogoProps = {
 };
 
 export default function BrandLogo({
-  className = "text-base font-bold text-dark sm:text-lg",
+  className = "text-sm font-bold text-dark sm:text-base lg:text-lg",
   accentClassName = "text-primary",
 }: BrandLogoProps) {
   return (

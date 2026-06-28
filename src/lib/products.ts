@@ -1,8 +1,8 @@
-export const PRODUCT_NAME = "American Chocolate";
-export const PRODUCT_NAME_BN = "আমেরিকান চকলেট";
+export const PRODUCT_NAME = "American Herbal Chocolate";
+export const PRODUCT_NAME_BN = "আমেরিকান হারবাল চকলেট";
 export const PRODUCT_TAGLINE = "অরিজিনাল হারবাল ফর্মুলা";
 export const PRODUCT_DESCRIPTION =
-  "অরিজিনাল American Chocolate (আমেরিকান চকলেট) — প্রাকৃতিক হারবাল উপাদানে তৈরি।";
+  "অরিজিনাল American Herbal Chocolate (আমেরিকান হারবাল চকলেট) — প্রাকৃতিক হারবাল উপাদানে তৈরি।";
 
 export type Product = {
   packageId: string;
@@ -61,7 +61,7 @@ export const BENEFITS = [
   "ফোঁটা ফোঁটা প্রস্রাব থেকে সুস্থতা লাভ করবেন।",
 ];
 
-export const INGREDIENTS_TITLE = "আমেরিকান চকলেট উপাদান:";
+export const INGREDIENTS_TITLE = "আমেরিকান হারবাল চকলেট উপাদান:";
 
 export const INGREDIENTS = [
   "মরিন্ডা অফিসিনালিস",
@@ -119,12 +119,12 @@ export const REVIEWS = [
   },
   {
     name: "কামরুল হাসান",
-    text: "অরিজিনাল American Chocolate পেয়েছি। দ্রুত ডেলিভারি এবং ভালো ফলাফল।",
+    text: "অরিজিনাল American Herbal Chocolate পেয়েছি। দ্রুত ডেলিভারি এবং ভালো ফলাফল।",
     rating: 5,
   },
   {
     name: "আরমান",
-    text: "আগে অনেক কিছু ট্রাই করেছি, American Chocolate-ই কাজ করেছে।",
+    text: "আগে অনেক কিছু ট্রাই করেছি, American Herbal Chocolate-ই কাজ করেছে।",
     rating: 5,
   },
   {
