@@ -3,6 +3,7 @@ import { dbConnect } from "@/lib/dbConnect";
 import {
   findRecentOrderByPhoneOrIp,
   getClientIp,
+  getCountryByIp,
   ORDER_COOLDOWN_MESSAGE,
   ORDER_COOLDOWN_MS,
 } from "@/lib/orderRateLimit";
@@ -13,11 +14,17 @@ import type { CreateOrderPayload, Order } from "@/types/order";
 
 export async function POST(request: Request) {
   try {
-    const country = (
+    const ip = getClientIp(request);
+
+    let country = (
       request.headers.get("cf-ipcountry") ||
       request.headers.get("x-vercel-ip-country") ||
       ""
     ).toUpperCase();
+
+    if (!country && ip && ip !== "unknown") {
+      country = await getCountryByIp(ip);
+    }
 
     if (country && country !== "BD") {
       return NextResponse.json(
@@ -43,7 +50,6 @@ export async function POST(request: Request) {
     const now = new Date();
     const subtotal = product.price;
     const total = subtotal + DELIVERY_CHARGE;
-    const ip = getClientIp(request);
 
     const orders = await dbConnect<Order>("orders");
     const cooldownSince = new Date(now.getTime() - ORDER_COOLDOWN_MS);

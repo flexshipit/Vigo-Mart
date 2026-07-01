@@ -23,6 +23,68 @@ export function getClientIp(request: Request): string {
   return "unknown";
 }
 
+export async function getCountryByIp(ip: string): Promise<string> {
+  if (!ip || ip === "unknown" || ip === "127.0.0.1" || ip === "::1" || ip === "localhost") {
+    return "BD";
+  }
+
+  // 1. Try ip-api.com (Free, no key, limit 45 req/min)
+  try {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 1200);
+    const res = await fetch(`http://ip-api.com/json/${ip}?fields=status,countryCode`, {
+      signal: controller.signal
+    });
+    clearTimeout(id);
+    if (res.ok) {
+      const data = (await res.json()) as { status: string; countryCode: string };
+      if (data.status === "success" && data.countryCode) {
+        return data.countryCode.toUpperCase();
+      }
+    }
+  } catch (err) {
+    console.error("ip-api.com error:", err);
+  }
+
+  // 2. Try ipapi.co (Free, no key, limit 1000/day)
+  try {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 1200);
+    const res = await fetch(`https://ipapi.co/${ip}/country/`, {
+      signal: controller.signal
+    });
+    clearTimeout(id);
+    if (res.ok) {
+      const country = await res.text();
+      if (country && country.trim().length === 2) {
+        return country.trim().toUpperCase();
+      }
+    }
+  } catch (err) {
+    console.error("ipapi.co error:", err);
+  }
+
+  // 3. Try ipwho.is (Free, no key, limit 250 req/min)
+  try {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 1200);
+    const res = await fetch(`https://ipwho.is/${ip}`, {
+      signal: controller.signal
+    });
+    clearTimeout(id);
+    if (res.ok) {
+      const data = (await res.json()) as { success: boolean; country_code: string };
+      if (data.success && data.country_code) {
+        return data.country_code.toUpperCase();
+      }
+    }
+  } catch (err) {
+    console.error("ipwho.is error:", err);
+  }
+
+  return "BD"; // Fallback to BD if all APIs fail to avoid false blocks
+}
+
 export async function findRecentOrderByPhoneOrIp(
   orders: Collection<Order>,
   phone: string,
