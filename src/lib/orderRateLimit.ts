@@ -5,7 +5,7 @@ export const ORDER_COOLDOWN_HOURS = 168;
 export const ORDER_COOLDOWN_MS = ORDER_COOLDOWN_HOURS * 60 * 60 * 1000;
 
 export const ORDER_COOLDOWN_MESSAGE =
-  "আপনি 7 দিন (168 ঘণ্টা)-এর মধ্যে আবার অর্ডার করতে পারবেন না।";
+  "আপনি অর্ডার করতে পারবেন না।";
 
 export function getClientIp(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for");

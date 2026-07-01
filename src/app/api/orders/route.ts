@@ -13,6 +13,22 @@ import type { CreateOrderPayload, Order } from "@/types/order";
 
 export async function POST(request: Request) {
   try {
+    const country = (
+      request.headers.get("cf-ipcountry") ||
+      request.headers.get("x-vercel-ip-country") ||
+      ""
+    ).toUpperCase();
+
+    if (country && country !== "BD") {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "আপনি অর্ডার করতে পারবেন না।",
+        },
+        { status: 403 }
+      );
+    }
+
     const body = (await request.json()) as CreateOrderPayload;
     const validation = validateOrderPayload(body);
 
