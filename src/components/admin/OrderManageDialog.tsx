@@ -41,12 +41,14 @@ export default function OrderManageDialog({
 
   const [status, setStatus] = useState<OrderStatus>("confirmed");
   const [courierId, setCourierId] = useState("");
+  const [riderNote, setRiderNote] = useState("");
   const [courierHistoryOpen, setCourierHistoryOpen] = useState(false);
 
   useEffect(() => {
     if (!order) return;
     setStatus(order.status);
     setCourierId(order.courierId ?? "");
+    setRiderNote(order.riderNote ?? "");
     setCourierHistoryOpen(false);
   }, [order]);
 
@@ -64,6 +66,7 @@ export default function OrderManageDialog({
         payload: {
           status,
           courierId: courierId || null,
+          riderNote: riderNote || null,
         },
       },
       {
@@ -90,7 +93,9 @@ export default function OrderManageDialog({
     }
 
     const needsSave =
-      courierId !== order.courierId || status !== order.status;
+      courierId !== order.courierId ||
+      status !== order.status ||
+      riderNote !== (order.riderNote ?? "");
 
     try {
       if (needsSave) {
@@ -99,6 +104,7 @@ export default function OrderManageDialog({
           payload: {
             status,
             courierId,
+            riderNote: riderNote || null,
           },
         });
       }
@@ -322,6 +328,14 @@ export default function OrderManageDialog({
                     {shipment.statusLabel}
                   </span>
                 </div>
+                {order.riderNote && (
+                  <div className="flex justify-between gap-3">
+                    <span className="text-slate-500">Rider Note</span>
+                    <span className="font-medium text-slate-900 text-right">
+                      {order.riderNote}
+                    </span>
+                  </div>
+                )}
                 {shipment.lastTrackedAt && (
                   <div className="flex justify-between gap-3">
                     <span className="text-slate-500">Last Tracked</span>
@@ -343,9 +357,23 @@ export default function OrderManageDialog({
                 )}
               </div>
             ) : (
-              <p className="mt-3 text-sm text-slate-500">
-                Select a courier and click Send — assignment saves automatically.
-              </p>
+              <div>
+                <p className="mt-3 text-sm text-slate-500">
+                  Select a courier and click Send — assignment saves automatically.
+                </p>
+                <div className="mt-4">
+                  <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    RIDER NOTE (COURIER INSTRUCTION)
+                  </label>
+                  <textarea
+                    value={riderNote}
+                    onChange={(e) => setRiderNote(e.target.value)}
+                    placeholder="যেমন: কল দিয়ে পাঠাবেন, ডেলিভারি না নিলে ফেরত দিন..."
+                    className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    rows={2}
+                  />
+                </div>
+              </div>
             )}
 
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">

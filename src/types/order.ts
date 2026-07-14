@@ -32,11 +32,13 @@ export type Order = {
   smsSent?: boolean;
   smsSentAt?: Date;
   metaEventId?: string;
+  riderNote?: string;
 };
 
 export type UpdateOrderPayload = {
   status?: OrderStatus;
   courierId?: string | null;
+  riderNote?: string | null;
 };
 
 export type CreateOrderPayload = {

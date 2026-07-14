@@ -176,6 +176,7 @@ export const pathaoAdapter: CourierAdapter = {
       item_weight: 0.5,
       item_description: order.packageName,
       amount_to_collect: order.total,
+      ...(order.riderNote ? { special_instruction: order.riderNote } : {}),
     };
 
     const result = await fetchJson(`${baseUrl}/aladdin/api/v1/orders`, {

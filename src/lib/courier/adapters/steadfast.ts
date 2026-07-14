@@ -77,7 +77,9 @@ export const steadfastAdapter: CourierAdapter = {
       cod_amount: order.total,
       delivery_type: 0,
       total_lot: 1,
-      note: `${order.packageName} — ${PRODUCT_NAME}`,
+      note: order.riderNote
+        ? `${order.packageName} — ${PRODUCT_NAME} | Note: ${order.riderNote}`
+        : `${order.packageName} — ${PRODUCT_NAME}`,
       item_description: order.packageName,
     };
 

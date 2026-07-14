@@ -63,6 +63,7 @@ export type AdminOrder = {
   createdAt: string;
   confirmedAt?: string;
   statusUpdatedAt?: string;
+  riderNote?: string;
 };
 
 export type AdminOrdersParams = {

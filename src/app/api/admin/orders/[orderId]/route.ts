@@ -27,7 +27,11 @@ export async function PATCH(request: Request, context: RouteContext) {
 
     const body = (await request.json()) as UpdateOrderPayload;
 
-    if (body.status === undefined && body.courierId === undefined) {
+    if (
+      body.status === undefined &&
+      body.courierId === undefined &&
+      body.riderNote === undefined
+    ) {
       return NextResponse.json(
         { success: false, message: "No updates provided" },
         { status: 400 }
@@ -84,6 +88,14 @@ export async function PATCH(request: Request, context: RouteContext) {
         if (courierChanged && existing.courierShipment) {
           unsetFields.courierShipment = "";
         }
+      }
+    }
+
+    if (body.riderNote !== undefined) {
+      if (body.riderNote === null || body.riderNote === "") {
+        unsetFields.riderNote = "";
+      } else {
+        setFields.riderNote = body.riderNote;
       }
     }
 
