@@ -3,14 +3,14 @@
 import { motion } from "framer-motion";
 import { ClipboardList, Package, Truck } from "lucide-react";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { DELIVERY_CHARGE, getProductPricingSummary } from "@/lib/products";
+import { DELIVERY_CHARGE } from "@/lib/products";
 
 const STEPS = [
   {
     icon: ClipboardList,
     step: "01",
     title: "অর্ডার করুন",
-    desc: `অর্ডার ফর্ম পূরণ করুন — ${getProductPricingSummary()}।`,
+    desc: "পছন্দের পণ্য সিলেক্ট করে অর্ডার ফর্ম পূরণ করুন।",
   },
   {
     icon: Truck,
@@ -21,14 +21,14 @@ const STEPS = [
   {
     icon: Package,
     step: "03",
-    title: "ব্যবহার শুরু করুন",
-    desc: "ক্যাশ অন ডেলিভারিতে পেমেন্ট করুন এবং ব্যবহার শুরু করুন!",
+    title: "খেয়ে দেখুন",
+    desc: "ক্যাশ অন ডেলিভারিতে পেমেন্ট করুন এবং হোমমেড স্বাদ উপভোগ করুন!",
   },
 ];
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="bg-white section-padding">
+    <section id="how-it-works" className="bg-cream section-padding">
       <div className="section-container">
         <SectionHeader
           badge="প্রক্রিয়া"
@@ -55,7 +55,7 @@ export default function HowItWorks() {
               <h3 className="mt-3 text-base font-semibold text-slate-900 sm:mt-4 sm:text-lg">
                 {item.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+              <p className="mt-2 text-sm leading-relaxed text-slate-600 lg:text-base">
                 {item.desc}
               </p>
             </motion.div>

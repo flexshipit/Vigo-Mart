@@ -1,20 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { ShoppingBag } from "lucide-react";
-import SectionHeader from "@/components/ui/SectionHeader";
+import { CirclePlay, ShoppingBag } from "lucide-react";
 import { useCreateOrder } from "@/hooks/useOrders";
-import { SITE_IMAGES } from "@/lib/images";
 import {
   createMetaEventId,
   getMetaCookies,
   trackBrowserPurchase,
 } from "@/lib/meta/client";
-import { DELIVERY_CHARGE, PRODUCTS, PRODUCT_NAME_BN } from "@/lib/products";
+import { DELIVERY_CHARGE, PRODUCTS } from "@/lib/products";
+import { SELECT_PACKAGE_EVENT } from "@/lib/selectPackage";
+import { toBengaliDigits } from "@/lib/numerals";
 
 type FormData = {
   fullName: string;
@@ -70,6 +70,26 @@ export default function OrderForm() {
     formState: { errors },
   } = useForm<FormData>();
 
+  useEffect(() => {
+    const applyPackage = (packageId: string) => {
+      if (PRODUCTS.some((product) => product.packageId === packageId)) {
+        setSelectedPackageId(packageId);
+      }
+    };
+
+    const onSelect = (event: Event) => {
+      applyPackage((event as CustomEvent<string>).detail);
+    };
+
+    window.addEventListener(SELECT_PACKAGE_EVENT, onSelect);
+
+    const params = new URLSearchParams(window.location.search);
+    const fromQuery = params.get("package");
+    if (fromQuery) applyPackage(fromQuery);
+
+    return () => window.removeEventListener(SELECT_PACKAGE_EVENT, onSelect);
+  }, []);
+
   const selected = PRODUCTS.find((p) => p.packageId === selectedPackageId)!;
   const subtotal = selected.price;
   const total = subtotal + DELIVERY_CHARGE;
@@ -110,19 +130,22 @@ export default function OrderForm() {
   };
 
   return (
-    <section id="order" className="bg-slate-50 section-padding">
+    <section id="order" className="bg-cream section-padding">
       <div className="section-container">
-        <SectionHeader
-          badge="অর্ডার"
-          title="অর্ডার করুন"
-          description="সঠিক তথ্য দিয়ে ফর্ম পূরণ করুন — অর্ডার কনফার্ম হলে Thank You পেজে যাবেন এবং ফোনে SMS পাবেন"
-        />
+        <div className="mx-auto max-w-6xl text-center">
+          <h2 className="text-2xl font-bold text-primary sm:text-3xl lg:text-4xl">
+            অর্ডার করুন
+          </h2>
+          <p className="mt-2 text-sm text-slate-600 sm:text-base lg:text-lg">
+            পণ্য বেছে নিন, সঠিক তথ্য দিন — ক্যাশ অন ডেলিভারিতে পাবেন
+          </p>
+        </div>
 
-        <div className="mx-auto mt-6 max-w-5xl overflow-hidden rounded-md border border-slate-200 lg:hidden">
-          <div className="relative aspect-[16/9] w-full">
+        <div className="mx-auto mt-6 max-w-5xl overflow-hidden rounded-md border border-primary/20 lg:hidden">
+          <div className="relative aspect-[16/9] w-full bg-maroon">
             <Image
-              src={SITE_IMAGES.orderBanner}
-              alt={`${PRODUCT_NAME_BN} অর্ডার`}
+              src={selected.image}
+              alt={`${selected.name} অর্ডার`}
               fill
               sizes="100vw"
               className="object-cover"
@@ -130,7 +153,7 @@ export default function OrderForm() {
           </div>
         </div>
 
-        <div className="mx-auto mt-6 max-w-5xl rounded-md border border-primary/20 bg-primary/5 p-4 lg:hidden">
+        <div className="mx-auto mt-6 max-w-5xl rounded-md border border-primary/20 bg-white p-4 lg:hidden">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">
             অর্ডার সামারি
           </p>
@@ -144,43 +167,53 @@ export default function OrderForm() {
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="mx-auto mt-6 grid max-w-5xl gap-5 sm:mt-8 sm:gap-6 lg:mt-10 lg:grid-cols-5 lg:gap-8"
+          className="mx-auto mt-6 grid max-w-6xl gap-5 sm:mt-8 sm:gap-6 lg:mt-10 lg:grid-cols-5 lg:gap-8"
         >
           <div className="space-y-5 sm:space-y-6 lg:col-span-3">
-            <div className="rounded-md border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-              <h3 className="mb-4 flex items-center gap-2 text-base font-semibold text-slate-900 sm:text-lg">
+            <div className="rounded-md border border-primary/15 bg-white p-4 shadow-sm sm:p-6">
+              <h3 className="mb-4 flex items-center gap-2 text-base font-semibold text-slate-900 sm:text-lg lg:text-xl">
                 <ShoppingBag className="h-5 w-5 shrink-0 text-primary" />
-                প্যাকেজ সিলেক্ট করুন
+                পণ্য সিলেক্ট করুন
               </h3>
 
               <div className="space-y-3">
                 {PRODUCTS.map((product) => (
                   <label
                     key={product.packageId}
-                    className={`flex cursor-pointer flex-col gap-3 rounded-md border p-3 transition-colors sm:flex-row sm:items-center sm:justify-between sm:p-4 ${
+                    className={`flex cursor-pointer items-center gap-3 rounded-md border p-3 transition-colors sm:p-4 ${
                       selectedPackageId === product.packageId
-                        ? "border-primary/30 bg-primary/5"
-                        : "border-slate-200 hover:border-slate-300"
+                        ? "border-primary/40 bg-primary/5"
+                        : "border-slate-200 hover:border-primary/20"
                     }`}
                   >
-                    <div className="flex items-start gap-3 sm:items-center">
-                      <input
-                        type="radio"
-                        name="packageId"
-                        value={product.packageId}
-                        checked={selectedPackageId === product.packageId}
-                        onChange={() => setSelectedPackageId(product.packageId)}
-                        className="mt-1 accent-primary sm:mt-0"
+                    <input
+                      type="radio"
+                      name="packageId"
+                      value={product.packageId}
+                      checked={selectedPackageId === product.packageId}
+                      onChange={() => setSelectedPackageId(product.packageId)}
+                      className="accent-primary"
+                    />
+                    <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md border border-primary/15 bg-cream">
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        fill
+                        sizes="56px"
+                        className="object-cover"
                       />
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium leading-snug text-slate-900">
-                          <span lang="en">{product.packets}</span> পিস
-                        </p>
-                      </div>
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium leading-snug text-slate-900 lg:text-base">
+                        {product.name}
+                      </p>
+                      <p className="mt-0.5 text-xs text-slate-500 lg:text-sm">
+                        {toBengaliDigits(product.price)} টাকা
+                      </p>
                     </div>
                     <span
                       lang="en"
-                      className="pl-7 text-sm font-bold text-primary sm:pl-0"
+                      className="shrink-0 text-sm font-bold text-primary"
                     >
                       {product.price}৳
                     </span>
@@ -189,8 +222,8 @@ export default function OrderForm() {
               </div>
             </div>
 
-            <div className="rounded-md border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-              <h3 className="mb-4 text-base font-semibold text-slate-900 sm:text-lg">
+            <div className="rounded-md border border-primary/15 bg-white p-4 shadow-sm sm:p-6">
+              <h3 className="mb-4 text-base font-semibold text-slate-900 sm:text-lg lg:text-xl">
                 ডেলিভারি তথ্য
               </h3>
 
@@ -201,7 +234,7 @@ export default function OrderForm() {
                   </label>
                   <input
                     {...register("fullName", { required: "নাম আবশ্যক" })}
-                    className="w-full rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="w-full rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 lg:text-base"
                     placeholder="আপনার পূর্ণ নাম"
                   />
                   {errors.fullName && (
@@ -219,7 +252,7 @@ export default function OrderForm() {
                     {...register("district", {
                       required: "জেলা ও থানা আবশ্যক",
                     })}
-                    className="w-full rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="w-full rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 lg:text-base"
                     placeholder="যেমন: ঢাকা, মিরপুর"
                   />
                   {errors.district && (
@@ -242,7 +275,7 @@ export default function OrderForm() {
                       },
                     })}
                     inputMode="numeric"
-                    className="w-full rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="w-full rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 lg:text-base"
                     placeholder="01XXXXXXXXX"
                   />
                   {errors.phone && (
@@ -259,7 +292,7 @@ export default function OrderForm() {
                   <textarea
                     {...register("address", { required: "ঠিকানা আবশ্যক" })}
                     rows={3}
-                    className="w-full resize-none rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="w-full resize-none rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 lg:text-base"
                     placeholder="বিস্তারিত ঠিকানা লিখুন"
                   />
                   {errors.address && (
@@ -273,11 +306,11 @@ export default function OrderForm() {
           </div>
 
           <div className="lg:col-span-2">
-            <div className="rounded-md border border-slate-200 bg-white p-4 shadow-sm sm:p-6 lg:sticky lg:top-20">
-              <div className="relative mb-4 hidden aspect-[4/3] overflow-hidden rounded-md lg:block">
+            <div className="rounded-md border border-primary/15 bg-white p-4 shadow-sm sm:p-6 lg:sticky lg:top-20">
+              <div className="relative mb-4 hidden aspect-[4/3] overflow-hidden rounded-md bg-maroon lg:block">
                 <Image
-                  src={SITE_IMAGES.orderBanner}
-                  alt={`${PRODUCT_NAME_BN} অর্ডার`}
+                  src={selected.image}
+                  alt={`${selected.name} অর্ডার`}
                   fill
                   sizes="(max-width: 1024px) 100vw, 320px"
                   className="object-cover"
@@ -303,15 +336,20 @@ export default function OrderForm() {
               <button
                 type="submit"
                 disabled={createOrderMutation.isPending}
-                className="mt-5 w-full rounded-md bg-primary py-3.5 text-sm font-semibold text-white transition-colors hover:bg-secondary disabled:opacity-60 sm:mt-6"
+                className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary py-3.5 text-sm font-semibold text-white transition-colors hover:bg-secondary disabled:opacity-60 sm:mt-6"
               >
-                {createOrderMutation.isPending
-                  ? "অর্ডার প্রসেস হচ্ছে..."
-                  : `অর্ডার কনফার্ম করুন — ${total}৳`}
+                {createOrderMutation.isPending ? (
+                  "অর্ডার প্রসেস হচ্ছে..."
+                ) : (
+                  <>
+                    অর্ডার কনফার্ম করুন — {total}৳
+                    <CirclePlay className="h-4 w-4" />
+                  </>
+                )}
               </button>
 
               <p className="mt-3 text-center text-xs text-slate-500">
-                100% সন্তুষ্টি বা সম্পূর্ণ টাকা ফেরত গ্যারান্টি
+                ক্যাশ অন ডেলিভারি · সারা বাংলাদেশ · {DELIVERY_CHARGE}৳ ডেলিভারি
               </p>
             </div>
           </div>

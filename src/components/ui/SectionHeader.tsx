@@ -23,7 +23,7 @@ export default function SectionHeader({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.45 }}
-      className={`max-w-2xl ${alignClass}`}
+      className={`max-w-3xl ${alignClass}`}
     >
       {badge && (
         <span className="mb-3 inline-block rounded-md border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
@@ -34,7 +34,7 @@ export default function SectionHeader({
         {title}
       </h2>
       {description && (
-        <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
+        <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base lg:text-lg">
           {description}
         </p>
       )}

@@ -1,7 +1,7 @@
 import type { Collection } from "mongodb";
 import type { Order } from "@/types/order";
 
-export const ORDER_COOLDOWN_HOURS = 168;
+export const ORDER_COOLDOWN_HOURS = 24;
 export const ORDER_COOLDOWN_MS = ORDER_COOLDOWN_HOURS * 60 * 60 * 1000;
 
 export const ORDER_COOLDOWN_MESSAGE =

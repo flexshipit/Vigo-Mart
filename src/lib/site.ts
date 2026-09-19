@@ -6,29 +6,33 @@ export const SITE_URL = "https://vigomaxbd.store";
 export const SITE = {
   name: PRODUCT_NAME,
   nameBn: PRODUCT_NAME_BN,
-  brandLead: "American Herbal",
-  brandAccent: "Chocolate",
+  brandLead: "EZ ALIF",
+  brandAccent: "Shop",
   domain: "vigomaxbd.store",
   url: SITE_URL,
   tagline: PRODUCT_NAME_BN,
-  description: `${PRODUCT_NAME} (${PRODUCT_NAME_BN}) — ${PRODUCT_DESCRIPTION} ${getProductPricingSummary()}। সারা বাংলাদেশে হোম ডেলিভারি 130৳। ক্যাশ অন ডেলিভারি ও 100% সন্তুষ্টি গ্যারান্টি।`,
+  description: `${PRODUCT_NAME} (${PRODUCT_NAME_BN}) — ${PRODUCT_DESCRIPTION} ${getProductPricingSummary()}। সারা বাংলাদেশে হোম ডেলিভারি 130৳। ক্যাশ অন ডেলিভারি।`,
   keywords: [
-    "American Herbal Chocolate",
-    "আমেরিকান হারবাল চকলেট",
-    "vigomaxbd",
-    "হারবাল চকলেট বাংলাদেশ",
-    "অরিজিনাল চকলেট বাংলাদেশ",
+    "EZ ALIF Shop",
+    "ইজি শপ",
+    "EZ ALIF",
+    "Easy Shop",
+    "গরুর মাংসের আচার",
+    "রসুনের আচার",
+    "চিংড়ি বালাচাও",
+    "মিক্সড নাট্স",
+    "হোমমেড আচার বাংলাদেশ",
     "ক্যাশ অন ডেলিভারি",
     "হোম ডেলিভারি বাংলাদেশ",
   ],
-  ogImage: "/images/product-1.png",
+  ogImage: "/images/beef-achar.jpg",
   locale: "bn_BD",
 } as const;
 
 export const siteMetadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${PRODUCT_NAME} — ${PRODUCT_NAME_BN} অর্ডার করুন`,
+    default: `${PRODUCT_NAME} — হোমমেড আচার, বালাচাও ও মিক্সড নাট্স`,
     template: `%s | ${SITE.name}`,
   },
   description: SITE.description,
@@ -78,7 +82,7 @@ export const siteMetadata: Metadata = {
   alternates: {
     canonical: SITE_URL,
   },
-  category: "health",
+  category: "food",
 };
 
 export const siteJsonLd = {
@@ -90,7 +94,7 @@ export const siteJsonLd = {
       name: SITE.name,
       alternateName: [SITE.nameBn, PRODUCT_NAME, PRODUCT_NAME_BN],
       url: SITE_URL,
-      logo: `${SITE_URL}${SITE.ogImage}`,
+      logo: `${SITE_URL}/images/logo.png`,
     },
     {
       "@type": "WebSite",
@@ -109,7 +113,7 @@ export const siteJsonLd = {
       url: SITE_URL,
       image: `${SITE_URL}${SITE.ogImage}`,
       description: SITE.description,
-      priceRange: "৳400–৳1000",
+      priceRange: "৳200–৳400",
       address: {
         "@type": "PostalAddress",
         addressCountry: "BD",

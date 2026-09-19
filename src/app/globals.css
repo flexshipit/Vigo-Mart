@@ -1,14 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --primary: #0d7c66;
-  --secondary: #16a085;
-  --gold: #f4b400;
-  --dark: #0f172a;
-  --landing-card-bg: #f0faf7;
-  --landing-card-border: #0d7c66;
+  --background: #f7f2ea;
+  --foreground: #3a0a04;
+  --primary: #750d00;
+  --secondary: #9a1a0a;
+  --gold: #e0b15a;
+  --dark: #3a0a04;
+  --cream: #f7f2ea;
+  --maroon: #750d00;
+  --landing-card-bg: #f7f2ea;
+  --landing-card-border: #750d00;
 }
 
 @theme inline {
@@ -18,6 +20,8 @@
   --color-secondary: var(--secondary);
   --color-gold: var(--gold);
   --color-dark: var(--dark);
+  --color-cream: var(--cream);
+  --color-maroon: var(--maroon);
   --font-sans: var(--font-hind-siliguri);
 }
 
@@ -49,12 +53,12 @@ button {
   width: 8px;
   height: 8px;
   margin: 0 4px !important;
-  background: #16a085;
+  background: #e0b15a;
   opacity: 0.7;
 }
 
 .hero-swiper .swiper-pagination-bullet-active {
-  background: #0d7c66;
+  background: #750d00;
   opacity: 1;
 }
 
@@ -67,12 +71,20 @@ button {
     @apply container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
   }
 
+  .catalog-container {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
   .landing-card {
-    @apply rounded-md border-2 border-primary bg-[#f0faf7] p-4 shadow-sm sm:p-5;
+    @apply rounded-md border-2 border-primary bg-cream p-4 shadow-sm sm:p-5;
   }
 
   .landing-cta {
-    @apply inline-flex w-full items-center justify-center rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-secondary sm:text-base;
+    @apply inline-flex w-full items-center justify-center rounded-md bg-primary px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-secondary sm:text-base;
+  }
+
+  .order-click-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-bold text-primary shadow-md transition-colors hover:bg-cream lg:px-6 lg:py-3 lg:text-[25px];
   }
 
   .accent-badge {

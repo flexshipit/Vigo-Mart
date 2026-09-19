@@ -2,15 +2,16 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft, Home, Leaf, Search } from "lucide-react";
+import { ArrowLeft, Home, Search } from "lucide-react";
 import BrandLogo from "@/components/ui/BrandLogo";
+import ShopMark from "@/components/ui/ShopMark";
 import { SITE } from "@/lib/site";
 
 const floatingItems = [
-  { emoji: "💊", x: "12%", y: "18%", delay: 0 },
+  { emoji: "🫙", x: "12%", y: "18%", delay: 0 },
   { emoji: "📦", x: "82%", y: "22%", delay: 0.4 },
-  { emoji: "✨", x: "78%", y: "72%", delay: 0.8 },
-  { emoji: "🌿", x: "15%", y: "75%", delay: 1.2 },
+  { emoji: "🥜", x: "78%", y: "72%", delay: 0.8 },
+  { emoji: "🦐", x: "15%", y: "75%", delay: 1.2 },
 ];
 
 export default function NotFound() {
@@ -46,9 +47,7 @@ export default function NotFound() {
       <header className="relative z-10 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
         <div className="section-container flex h-14 items-center sm:h-16">
           <Link href="/" className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-white sm:h-9 sm:w-9">
-              <Leaf className="h-4 w-4 sm:h-5 sm:w-5" />
-            </span>
+            <ShopMark size={36} className="h-8 w-8 sm:h-9 sm:w-9" />
             <BrandLogo className="text-base font-bold text-slate-900 sm:text-lg" />
           </Link>
         </div>
@@ -67,7 +66,7 @@ export default function NotFound() {
               transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
               className="flex h-28 w-28 items-center justify-center rounded-md border border-primary/20 bg-white text-6xl shadow-lg shadow-primary/10 sm:h-32 sm:w-32 sm:text-7xl"
             >
-              💊
+              🫙
             </motion.div>
             <motion.span
               initial={{ opacity: 0, x: 20 }}

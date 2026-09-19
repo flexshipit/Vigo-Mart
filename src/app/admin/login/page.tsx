@@ -6,10 +6,11 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
-import { ArrowRight, Leaf, Lock, User } from "lucide-react";
+import { ArrowRight, Lock, User } from "lucide-react";
 import { loginAdmin } from "@/lib/api/admin";
 import { getAdminAuth, saveAdminAuth } from "@/lib/auth/adminAuth";
 import { SITE } from "@/lib/site";
+import ShopMark from "@/components/ui/ShopMark";
 
 type LoginForm = {
   username: string;
@@ -56,9 +57,7 @@ export default function AdminLoginPage() {
         className="w-full max-w-md"
       >
         <div className="mb-8 flex flex-col items-center text-center">
-          <span className="mb-3 flex h-11 w-11 items-center justify-center rounded-md bg-primary text-white">
-            <Leaf className="h-6 w-6" />
-          </span>
+          <ShopMark size={44} className="mb-3 h-11 w-11" />
           <p className="text-lg font-bold text-slate-900">{SITE.name}</p>
           <p className="text-sm text-primary">Admin Console</p>
         </div>

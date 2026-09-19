@@ -7,3 +7,7 @@ export function toEnglishDigits(value: string | number): string {
     String(BENGALI_DIGITS.indexOf(digit))
   );
 }
+
+export function toBengaliDigits(value: string | number): string {
+  return String(value).replace(/[0-9]/g, (digit) => BENGALI_DIGITS[Number(digit)]);
+}

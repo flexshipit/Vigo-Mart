@@ -36,7 +36,7 @@ export default function WhatsAppFloat() {
     >
       <span className="max-w-[220px] rounded-lg border border-slate-200 bg-white px-3 py-2 text-right text-xs leading-snug text-slate-700 shadow-lg transition-transform group-hover:scale-[1.02] sm:max-w-none sm:text-sm">
         <span className="block font-semibold text-slate-900">
-          ডাবল অর্ডার / প্রশ্ন
+          অর্ডার / প্রশ্ন
         </span>
         <span lang="en" className="mt-0.5 block font-bold text-[#25D366]">
           {WHATSAPP_NUMBER_DISPLAY}

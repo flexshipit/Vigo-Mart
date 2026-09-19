@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ExternalLink, Leaf, LogOut, X } from "lucide-react";
+import { ExternalLink, LogOut, X } from "lucide-react";
 import { SITE } from "@/lib/site";
 import AdminAvatar from "@/components/admin/AdminAvatar";
+import ShopMark from "@/components/ui/ShopMark";
 import { ADMIN_NAV } from "@/lib/admin/navigation";
 
 type AdminSidebarProps = {
@@ -40,9 +41,7 @@ export default function AdminSidebar({
       >
         <div className="flex items-center justify-between border-b border-white/10 px-5 py-5">
           <Link href="/admin" className="flex items-center gap-3" onClick={onClose}>
-            <span className="flex h-10 w-10 items-center justify-center rounded-md bg-primary text-white shadow-lg shadow-primary/20">
-              <Leaf className="h-5 w-5" />
-            </span>
+            <ShopMark size={40} className="h-10 w-10" />
             <div>
               <p className="text-sm font-bold text-white">{SITE.name}</p>
               <p className="text-xs text-secondary">Admin Console</p>

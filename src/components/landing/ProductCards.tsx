@@ -1,84 +1,94 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Check, Sparkles } from "lucide-react";
-import SectionHeader from "@/components/ui/SectionHeader";
-import { DELIVERY_CHARGE, getProductPricingSummary, PRODUCT_NAME, PRODUCT_NAME_BN, PRODUCTS } from "@/lib/products";
+import Image from "next/image";
+import { CirclePlay } from "lucide-react";
+import { PRODUCTS, type Product } from "@/lib/products";
+import { toBengaliDigits } from "@/lib/numerals";
+import { selectPackage } from "@/lib/selectPackage";
 
-const FEATURES = [
-  `অরিজিনাল ${PRODUCT_NAME} (${PRODUCT_NAME_BN})`,
-  "সারা বাংলাদেশে হোম ডেলিভারি",
-  "100% সন্তুষ্টি বা টাকা ফেরত গ্যারান্টি",
-];
+function OrderClickButton({ product }: { product: Product }) {
+  return (
+    <a
+      href="#order"
+      onClick={() => selectPackage(product.packageId)}
+      className="order-click-btn"
+    >
+      অর্ডার করতে ক্লিক করুন
+      <CirclePlay className="h-4 w-4 lg:h-6 lg:w-6" />
+    </a>
+  );
+}
+
+function ProductBlock({ product }: { product: Product }) {
+  return (
+    <article
+      id={`product-${product.packageId}`}
+      className="border-b border-white/15 py-8 last:border-b-0 sm:py-10 lg:py-14"
+    >
+      <h2 className="text-center text-xl font-bold leading-snug text-white sm:text-2xl lg:text-[40px] lg:leading-tight">
+        {product.headline}
+      </h2>
+
+      {product.intro && (
+        <p className="mt-4 text-center text-base font-bold leading-relaxed text-white sm:text-lg lg:mt-6 lg:text-[34px] lg:leading-10">
+          {product.intro}
+        </p>
+      )}
+
+      <div className="mt-6 grid items-center gap-6 sm:mt-8 lg:mt-10 lg:grid-cols-2 lg:gap-12">
+        <div>
+          {product.whyTitle !== product.headline && (
+            <h3 className="text-lg font-bold text-white sm:text-xl lg:text-[34px] lg:leading-10">
+              {product.whyTitle}
+            </h3>
+          )}
+          <ul
+            className={
+              product.whyTitle !== product.headline
+                ? "mt-4 space-y-0 lg:mt-6"
+                : "space-y-0"
+            }
+          >
+            {product.bullets.map((bullet) => (
+              <li
+                key={bullet}
+                className="flex gap-3 border-b border-white/25 py-3 text-[15px] font-semibold leading-relaxed text-white last:border-b-0 sm:text-base lg:gap-4 lg:py-4 lg:text-[30px] lg:leading-[1.45]"
+              >
+                <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-gold lg:mt-3.5 lg:h-2.5 lg:w-2.5" />
+                <span>{bullet}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="relative mx-auto aspect-square w-full max-w-[280px] overflow-hidden rounded-md border-2 border-gold/80 bg-[#f3e6c8] shadow-lg sm:max-w-[360px] lg:mx-0 lg:max-w-[540px]">
+          <Image
+            src={product.image}
+            alt={product.name}
+            fill
+            sizes="(min-width: 1024px) 540px, (min-width: 640px) 360px, 280px"
+            className="object-cover"
+          />
+        </div>
+      </div>
+
+      <div className="mt-6 flex flex-col items-center gap-3 lg:mt-10 lg:flex-row lg:justify-center lg:gap-8">
+        <p className="text-center text-lg font-bold text-white sm:text-xl lg:text-[32px]">
+          {product.name} {toBengaliDigits(product.price)} টাকা
+        </p>
+        <OrderClickButton product={product} />
+      </div>
+    </article>
+  );
+}
 
 export default function ProductCards() {
   return (
-    <section id="products" className="bg-slate-50 section-padding">
-      <div className="section-container">
-        <SectionHeader
-          badge="প্রোডাক্ট"
-          title={`${PRODUCT_NAME_BN} — প্যাকেজ বেছে নিন`}
-          description={`${getProductPricingSummary()} | ডেলিভারি ${DELIVERY_CHARGE}৳ (সারা বাংলাদেশ)`}
-        />
-
-        <div className="mt-8 grid gap-4 sm:mt-10 sm:grid-cols-2 sm:gap-5 lg:mt-12 lg:grid-cols-3 lg:gap-6">
-          {PRODUCTS.map((product, i) => (
-            <motion.article
-              key={product.packageId}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-20px" }}
-              transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="relative flex h-full flex-col rounded-md border-2 border-primary/30 bg-gradient-to-b from-primary/5 to-white p-5 shadow-sm ring-1 ring-primary/10 transition-shadow hover:shadow-md sm:p-6"
-            >
-              {product.badge && (
-                <span className="absolute -top-2.5 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-md bg-primary px-3 py-1 text-[11px] font-bold text-white sm:text-xs">
-                  <Sparkles className="h-3 w-3" />
-                  {product.badge}
-                </span>
-              )}
-
-              <div className="accent-icon-box mb-4 h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl">
-                🍫
-              </div>
-
-              <h3 className="text-base font-semibold leading-snug text-slate-900 sm:text-lg">
-                <span lang="en">{product.packets}</span> পিস
-              </h3>
-
-              <div className="mt-3 flex items-baseline gap-1 sm:mt-4">
-                <span lang="en" className="text-2xl font-bold text-primary sm:text-3xl">
-                  {product.price}
-                </span>
-                <span className="text-sm text-slate-500">৳</span>
-              </div>
-
-              <p className="mt-1 text-xs text-slate-500 sm:text-sm">
-                + ডেলিভারি <span lang="en">{DELIVERY_CHARGE}</span>৳ | মোট{" "}
-                <span lang="en">{product.price + DELIVERY_CHARGE}</span>৳
-              </p>
-
-              <ul className="mt-4 flex-1 space-y-2 sm:mt-5">
-                {FEATURES.map((f) => (
-                  <li
-                    key={f}
-                    className="flex items-start gap-2 text-xs text-slate-600 sm:text-sm"
-                  >
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-
-              <a
-                href="#order"
-                className="mt-5 block rounded-md bg-primary py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-secondary sm:mt-6"
-              >
-                অর্ডার করুন
-              </a>
-            </motion.article>
-          ))}
-        </div>
+    <section id="products" className="bg-maroon">
+      <div className="catalog-container">
+        {PRODUCTS.map((product) => (
+          <ProductBlock key={product.packageId} product={product} />
+        ))}
       </div>
     </section>
   );

@@ -175,7 +175,7 @@ export async function sendOrderConfirmationSms(
     orderId: string;
   }
 ): Promise<SendSmsResult> {
-  const brandName = process.env.MIMSMS_BRAND_NAME || "American Herbal Chocolate";
+  const brandName = process.env.MIMSMS_BRAND_NAME || "EZ ALIF Shop";
   const firstName = payload.fullName.trim().split(" ")[0];
 
   const message = `${brandName}: ${firstName}, apnar order confirm! ${payload.packageName}, Total ${payload.total}Tk. Cash on delivery. 2-4 din e delivery. Order ID: ${payload.orderId.slice(-6).toUpperCase()}`;

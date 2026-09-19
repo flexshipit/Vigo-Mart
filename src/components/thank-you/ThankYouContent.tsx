@@ -91,7 +91,7 @@ export default function ThankYouContent({ orderId }: ThankYouContentProps) {
             </span>
           </div>
           <div className="flex justify-between gap-3">
-            <span className="text-slate-500">প্যাকেজ</span>
+            <span className="text-slate-500">পণ্য</span>
             <span className="text-right font-medium text-slate-800">
               {order.packageName}
             </span>
