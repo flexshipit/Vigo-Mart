@@ -6,6 +6,7 @@ export type ApiResponse<T = unknown> = {
   data?: T;
   orderId?: string;
   alreadySent?: boolean;
+  skipped?: boolean;
 };
 
 export type OrderSummary = {
@@ -17,6 +18,7 @@ export type OrderSummary = {
   phone: string;
   status: string;
   smsSent: boolean;
+  smsEnabled: boolean;
   createdAt: string;
 };
 
@@ -58,7 +60,7 @@ export async function fetchOrderSummary(orderId: string): Promise<OrderSummary> 
 
 export async function sendOrderSms(
   orderId: string
-): Promise<{ message: string; alreadySent: boolean }> {
+): Promise<{ message: string; alreadySent: boolean; skipped: boolean }> {
   const res = await fetch(`/api/orders/${orderId}/sms`, {
     method: "POST",
   });
@@ -72,5 +74,6 @@ export async function sendOrderSms(
   return {
     message: data.message || "আপনার ফোনে confirmation SMS পাঠানো হয়েছে।",
     alreadySent: Boolean(data.alreadySent),
+    skipped: Boolean(data.skipped),
   };
 }

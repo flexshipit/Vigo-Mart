@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/dbConnect";
-import { sendOrderConfirmationSms } from "@/lib/mimsms";
+import { isSmsConfigured, sendOrderConfirmationSms } from "@/lib/mimsms";
 import { parseOrderId } from "@/lib/orderValidation";
 import type { Order } from "@/types/order";
 
@@ -10,6 +10,14 @@ type RouteContext = {
 
 export async function POST(_request: Request, context: RouteContext) {
   try {
+    if (!isSmsConfigured()) {
+      return NextResponse.json({
+        success: true,
+        skipped: true,
+        alreadySent: false,
+      });
+    }
+
     const { orderId } = await context.params;
     const objectId = parseOrderId(orderId);
 
@@ -44,6 +52,14 @@ export async function POST(_request: Request, context: RouteContext) {
       total: order.total,
       orderId,
     });
+
+    if (smsResult.skipped) {
+      return NextResponse.json({
+        success: true,
+        skipped: true,
+        alreadySent: false,
+      });
+    }
 
     if (!smsResult.success) {
       return NextResponse.json(

@@ -1,6 +1,7 @@
 type SendSmsResult = {
   success: boolean;
   message: string;
+  skipped?: boolean;
 };
 
 type MiMSmsResponse = {
@@ -82,31 +83,33 @@ function isSmsSuccess(data: MiMSmsResponse, responseOk: boolean): boolean {
   );
 }
 
-async function sendSms(phone: string, message: string): Promise<SendSmsResult> {
+export function isSmsConfigured(): boolean {
   const username = process.env.MIMSMS_USERNAME;
   const apiKey = process.env.MIMSMS_API_KEY;
   const senderName = process.env.MIMSMS_SENDER_NAME;
+
+  if (!username || !apiKey || !senderName) return false;
+
+  return (
+    !username.includes("your_") &&
+    !apiKey.includes("your_") &&
+    !senderName.includes("your_")
+  );
+}
+
+async function sendSms(phone: string, message: string): Promise<SendSmsResult> {
+  if (!isSmsConfigured()) {
+    return {
+      success: true,
+      skipped: true,
+      message: "",
+    };
+  }
+
+  const username = process.env.MIMSMS_USERNAME!;
+  const apiKey = process.env.MIMSMS_API_KEY!;
+  const senderName = process.env.MIMSMS_SENDER_NAME!;
   const transactionType = process.env.MIMSMS_TRANSACTION_TYPE || "T";
-
-  if (!username || !apiKey || !senderName) {
-    return {
-      success: false,
-      message:
-        "SMS সার্ভিস সেটআপ সম্পূর্ণ হয়নি। সাইট অ্যাডমিনের সাথে যোগাযোগ করুন।",
-    };
-  }
-
-  if (
-    username.includes("your_") ||
-    apiKey.includes("your_") ||
-    senderName.includes("your_")
-  ) {
-    return {
-      success: false,
-      message:
-        "SMS সার্ভিস সেটআপ সম্পূর্ণ হয়নি। MiMSMS credentials সঠিকভাবে সেট করুন।",
-    };
-  }
 
   const mobileNumber = formatPhoneNumber(phone);
   const apiUrl =

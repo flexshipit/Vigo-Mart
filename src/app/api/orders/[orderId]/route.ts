@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/dbConnect";
+import { isSmsConfigured } from "@/lib/mimsms";
 import { parseOrderId } from "@/lib/orderValidation";
 import type { Order } from "@/types/order";
 
@@ -40,6 +41,7 @@ export async function GET(_request: Request, context: RouteContext) {
         phone: order.phone,
         status: order.status,
         smsSent: Boolean(order.smsSent),
+        smsEnabled: isSmsConfigured(),
         createdAt: order.createdAt?.toISOString?.() ?? order.createdAt,
       },
     });

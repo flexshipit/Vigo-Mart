@@ -384,10 +384,6 @@ export default function OrderForm() {
                 />
               </div>
 
-              <p className="mt-4 rounded-md bg-primary/5 p-3 text-xs leading-relaxed text-slate-600 sm:text-sm">
-                📱 অর্ডার কনফার্ম হলে আপনার ফোনে confirmation SMS পাঠানো হবে
-              </p>
-
               <button
                 type="submit"
                 disabled={createOrderMutation.isPending}

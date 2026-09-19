@@ -19,13 +19,16 @@ export default function ThankYouContent({ orderId }: ThankYouContentProps) {
   const sendSmsMutation = useSendOrderSms();
 
   useEffect(() => {
-    if (!order || order.smsSent || smsTriggered.current) return;
+    if (!order || !order.smsEnabled || order.smsSent || smsTriggered.current) {
+      return;
+    }
 
     smsTriggered.current = true;
     sendSmsMutation.mutate(orderId, {
       onSuccess: (result) => {
+        if (result.skipped) return;
         queryClient.invalidateQueries({ queryKey: orderKeys.detail(orderId) });
-        if (!result.alreadySent) {
+        if (!result.alreadySent && result.message) {
           toast.success(result.message, { duration: 5000 });
         }
       },
@@ -36,8 +39,10 @@ export default function ThankYouContent({ orderId }: ThankYouContentProps) {
   }, [order, orderId, queryClient, sendSmsMutation]);
 
   const shortOrderId = orderId.slice(-6).toUpperCase();
-  const smsPending = sendSmsMutation.isPending;
-  const smsFailed = sendSmsMutation.isError && !order?.smsSent;
+  const smsEnabled = Boolean(order?.smsEnabled);
+  const smsPending = smsEnabled && sendSmsMutation.isPending;
+  const smsFailed =
+    smsEnabled && sendSmsMutation.isError && !order?.smsSent;
 
   if (isLoading) {
     return (
@@ -116,44 +121,51 @@ export default function ThankYouContent({ orderId }: ThankYouContentProps) {
           </div>
         </div>
 
-        <div className="mt-6 flex items-start gap-3 rounded-md border border-primary/20 bg-primary/5 p-4 text-sm text-dark">
-          <MessageSquare className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-          <div>
-            {smsPending ? (
-              <p>আপনার ফোনে confirmation SMS পাঠানো হচ্ছে...</p>
-            ) : order.smsSent || sendSmsMutation.isSuccess ? (
-              <p>আপনার ফোনে confirmation SMS পাঠানো হয়েছে।</p>
-            ) : smsFailed ? (
-              <p>SMS পাঠানো যায়নি। নিচের বাটনে ক্লিক করে আবার চেষ্টা করুন।</p>
-            ) : (
-              <p>অর্ডার কনফার্মেশন SMS শীঘ্রই পাঠানো হবে।</p>
-            )}
-          </div>
-        </div>
+        {smsEnabled && (
+          <>
+            <div className="mt-6 flex items-start gap-3 rounded-md border border-primary/20 bg-primary/5 p-4 text-sm text-dark">
+              <MessageSquare className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+              <div>
+                {smsPending ? (
+                  <p>আপনার ফোনে confirmation SMS পাঠানো হচ্ছে...</p>
+                ) : order.smsSent || sendSmsMutation.isSuccess ? (
+                  <p>আপনার ফোনে confirmation SMS পাঠানো হয়েছে।</p>
+                ) : smsFailed ? (
+                  <p>
+                    SMS পাঠানো যায়নি। নিচের বাটনে ক্লিক করে আবার চেষ্টা করুন।
+                  </p>
+                ) : (
+                  <p>অর্ডার কনফার্মেশন SMS শীঘ্রই পাঠানো হবে।</p>
+                )}
+              </div>
+            </div>
 
-        {smsFailed && (
-          <button
-            type="button"
-            onClick={() =>
-              sendSmsMutation.mutate(orderId, {
-                onSuccess: (result) => {
-                  queryClient.invalidateQueries({
-                    queryKey: orderKeys.detail(orderId),
-                  });
-                  toast.success(result.message);
-                },
-                onError: (error) =>
-                  toast.error(error.message || "SMS পাঠানো যায়নি"),
-              })
-            }
-            disabled={sendSmsMutation.isPending}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-md border border-primary/30 bg-white px-4 py-2.5 text-sm font-semibold text-primary hover:bg-primary/5 disabled:opacity-60"
-          >
-            <RefreshCw
-              className={`h-4 w-4 ${sendSmsMutation.isPending ? "animate-spin" : ""}`}
-            />
-            SMS আবার পাঠান
-          </button>
+            {smsFailed && (
+              <button
+                type="button"
+                onClick={() =>
+                  sendSmsMutation.mutate(orderId, {
+                    onSuccess: (result) => {
+                      if (result.skipped) return;
+                      queryClient.invalidateQueries({
+                        queryKey: orderKeys.detail(orderId),
+                      });
+                      if (result.message) toast.success(result.message);
+                    },
+                    onError: (error) =>
+                      toast.error(error.message || "SMS পাঠানো যায়নি"),
+                  })
+                }
+                disabled={sendSmsMutation.isPending}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-md border border-primary/30 bg-white px-4 py-2.5 text-sm font-semibold text-primary hover:bg-primary/5 disabled:opacity-60"
+              >
+                <RefreshCw
+                  className={`h-4 w-4 ${sendSmsMutation.isPending ? "animate-spin" : ""}`}
+                />
+                SMS আবার পাঠান
+              </button>
+            )}
+          </>
         )}
 
         <Link
