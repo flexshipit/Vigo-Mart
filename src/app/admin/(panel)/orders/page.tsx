@@ -192,6 +192,7 @@ export default function AdminOrdersPage() {
                             </p>
                             <p className="mt-0.5 text-xs text-slate-500">
                               {order.packageName}
+                              {order.packets > 1 ? ` × ${order.packets}` : ""}
                             </p>
                           </div>
                         </div>
@@ -273,6 +274,7 @@ export default function AdminOrdersPage() {
                         <OrderStatusBadge status={order.status} />
                         <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600">
                           {order.packageName}
+                          {order.packets > 1 ? ` × ${order.packets}` : ""}
                         </span>
                         {order.courierName && (
                           <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-medium text-blue-700">

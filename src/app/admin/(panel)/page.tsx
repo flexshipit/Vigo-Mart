@@ -179,6 +179,7 @@ export default function AdminDashboardPage() {
                     </td>
                     <td className="px-4 py-4 text-slate-600 sm:px-6">
                       {order.packageName}
+                      {order.packets > 1 ? ` × ${order.packets}` : ""}
                     </td>
                     <td
                       lang="en"

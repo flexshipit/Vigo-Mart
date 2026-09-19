@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { getProductByPackageId } from "@/lib/products";
+import { getProductByPackageId, MAX_ORDER_QUANTITY } from "@/lib/products";
 import type { CreateOrderPayload } from "@/types/order";
 
 export function parseOrderId(orderId: string): ObjectId | null {
@@ -9,9 +9,21 @@ export function parseOrderId(orderId: string): ObjectId | null {
 
 export function validateOrderPayload(body: CreateOrderPayload) {
   const { packageId, fullName, district, address, phone } = body;
+  const quantity = Number(body.quantity);
 
   if (!packageId || !fullName || !district || !address || !phone) {
     return { ok: false as const, message: "সব আবশ্যক তথ্য পূরণ করুন" };
+  }
+
+  if (
+    !Number.isInteger(quantity) ||
+    quantity < 1 ||
+    quantity > MAX_ORDER_QUANTITY
+  ) {
+    return {
+      ok: false as const,
+      message: `পরিমাণ ১ থেকে ${MAX_ORDER_QUANTITY} এর মধ্যে হতে হবে`,
+    };
   }
 
   if (!/^01[3-9]\d{8}$/.test(phone)) {
@@ -26,6 +38,7 @@ export function validateOrderPayload(body: CreateOrderPayload) {
   return {
     ok: true as const,
     product,
+    quantity,
     fullName: fullName.trim(),
     district: district.trim(),
     address: address.trim(),

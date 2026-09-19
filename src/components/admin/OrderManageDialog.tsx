@@ -173,6 +173,12 @@ export default function OrderManageDialog({
               <span className="text-slate-500">Package</span>
               <span className="text-right font-medium text-slate-800">
                 {order.packageName}
+                {order.packets > 1 ? (
+                  <span lang="en" className="text-slate-500">
+                    {" "}
+                    × {order.packets}
+                  </span>
+                ) : null}
               </span>
             </div>
             <div className="mt-3 flex justify-between gap-3">

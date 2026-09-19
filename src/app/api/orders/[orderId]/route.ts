@@ -35,6 +35,7 @@ export async function GET(_request: Request, context: RouteContext) {
         orderId: order._id?.toString(),
         fullName: order.fullName,
         packageName: order.packageName,
+        quantity: order.packets,
         total: order.total,
         phone: order.phone,
         status: order.status,

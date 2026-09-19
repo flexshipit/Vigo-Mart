@@ -43,6 +43,7 @@ export type UpdateOrderPayload = {
 
 export type CreateOrderPayload = {
   packageId: string;
+  quantity: number;
   fullName: string;
   district: string;
   address: string;

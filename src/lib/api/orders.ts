@@ -12,6 +12,7 @@ export type OrderSummary = {
   orderId: string;
   fullName: string;
   packageName: string;
+  quantity: number;
   total: number;
   phone: string;
   status: string;

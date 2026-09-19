@@ -23,11 +23,12 @@ export type Product = {
 };
 
 export const DELIVERY_CHARGE = 130;
+export const MAX_ORDER_QUANTITY = 10;
 
 export const PRODUCTS: Product[] = [
   {
     packageId: "beef-achar",
-    name: "গরুর মাংসের আচার",
+    name: "গরুর মাংসের আচার (২৫০ গ্রাম)",
     packets: 1,
     price: 350,
     image: "https://ik.imagekit.io/hzsm4z5zc/beef-achar.jpg",
@@ -44,7 +45,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     packageId: "garlic-achar",
-    name: "রসুনের আচার",
+    name: "রসুনের আচার (২৫০ গ্রাম)",
     packets: 1,
     price: 200,
     image: "https://ik.imagekit.io/hzsm4z5zc/garlic-achar.jpg",
@@ -63,7 +64,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     packageId: "shrimp-balachao",
-    name: "চিংড়ি বালাচাও",
+    name: "চিংড়ি বালাচাও (২৫০ গ্রাম)",
     packets: 1,
     price: 200,
     image: "https://ik.imagekit.io/hzsm4z5zc/shrimp-balachao.jpg",
@@ -102,7 +103,7 @@ export const PRODUCTS: Product[] = [
 
 export function getProductPricingSummary(): string {
   return PRODUCTS.map((product) => `${product.name} — ${product.price}৳`).join(
-    " | "
+    " | ",
   );
 }
 

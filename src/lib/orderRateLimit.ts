@@ -5,7 +5,7 @@ export const ORDER_COOLDOWN_HOURS = 24;
 export const ORDER_COOLDOWN_MS = ORDER_COOLDOWN_HOURS * 60 * 60 * 1000;
 
 export const ORDER_COOLDOWN_MESSAGE =
-  "আপনি অর্ডার করতে পারবেন না।";
+  "আপনি একবার অর্ডার করেছেন। পুণরায় ২৪ ঘন্টা পরে অর্ডার করুন, অথবা আমাদের Whatsapp: 01626002281 নাম্বারে যোগাযোগ করুন";
 
 export function getClientIp(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for");
@@ -24,7 +24,13 @@ export function getClientIp(request: Request): string {
 }
 
 export async function getCountryByIp(ip: string): Promise<string> {
-  if (!ip || ip === "unknown" || ip === "127.0.0.1" || ip === "::1" || ip === "localhost") {
+  if (
+    !ip ||
+    ip === "unknown" ||
+    ip === "127.0.0.1" ||
+    ip === "::1" ||
+    ip === "localhost"
+  ) {
     return "BD";
   }
 
@@ -32,12 +38,18 @@ export async function getCountryByIp(ip: string): Promise<string> {
   try {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), 1200);
-    const res = await fetch(`http://ip-api.com/json/${ip}?fields=status,countryCode`, {
-      signal: controller.signal
-    });
+    const res = await fetch(
+      `http://ip-api.com/json/${ip}?fields=status,countryCode`,
+      {
+        signal: controller.signal,
+      },
+    );
     clearTimeout(id);
     if (res.ok) {
-      const data = (await res.json()) as { status: string; countryCode: string };
+      const data = (await res.json()) as {
+        status: string;
+        countryCode: string;
+      };
       if (data.status === "success" && data.countryCode) {
         return data.countryCode.toUpperCase();
       }
@@ -51,7 +63,7 @@ export async function getCountryByIp(ip: string): Promise<string> {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), 1200);
     const res = await fetch(`https://ipapi.co/${ip}/country/`, {
-      signal: controller.signal
+      signal: controller.signal,
     });
     clearTimeout(id);
     if (res.ok) {
@@ -69,11 +81,14 @@ export async function getCountryByIp(ip: string): Promise<string> {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), 1200);
     const res = await fetch(`https://ipwho.is/${ip}`, {
-      signal: controller.signal
+      signal: controller.signal,
     });
     clearTimeout(id);
     if (res.ok) {
-      const data = (await res.json()) as { success: boolean; country_code: string };
+      const data = (await res.json()) as {
+        success: boolean;
+        country_code: string;
+      };
       if (data.success && data.country_code) {
         return data.country_code.toUpperCase();
       }
@@ -89,9 +104,11 @@ export async function findRecentOrderByPhoneOrIp(
   orders: Collection<Order>,
   phone: string,
   ip: string,
-  since: Date
+  since: Date,
 ) {
-  const matchConditions: Array<{ phone: string } | { ip: string }> = [{ phone }];
+  const matchConditions: Array<{ phone: string } | { ip: string }> = [
+    { phone },
+  ];
 
   if (ip !== "unknown") {
     matchConditions.push({ ip });

@@ -94,6 +94,12 @@ export default function ThankYouContent({ orderId }: ThankYouContentProps) {
             <span className="text-slate-500">পণ্য</span>
             <span className="text-right font-medium text-slate-800">
               {order.packageName}
+              {order.quantity > 1 ? (
+                <span lang="en" className="text-slate-500">
+                  {" "}
+                  × {order.quantity}
+                </span>
+              ) : null}
             </span>
           </div>
           <div className="flex justify-between gap-3">

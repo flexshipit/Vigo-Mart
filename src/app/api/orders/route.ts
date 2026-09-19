@@ -46,9 +46,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const { product, fullName, district, address, phone } = validation;
+    const { product, quantity, fullName, district, address, phone } =
+      validation;
     const now = new Date();
-    const subtotal = product.price;
+    const subtotal = product.price * quantity;
     const total = subtotal + DELIVERY_CHARGE;
 
     const orders = await dbConnect<Order>("orders");
@@ -74,7 +75,7 @@ export async function POST(request: Request) {
     const order: Order = {
       packageId: product.packageId,
       packageName: product.name,
-      packets: product.packets,
+      packets: quantity,
       fullName,
       district,
       address,

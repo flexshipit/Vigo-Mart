@@ -172,7 +172,7 @@ export const pathaoAdapter: CourierAdapter = {
       recipient_address: buildFullAddress(order),
       delivery_type: 48,
       item_type: 2,
-      item_quantity: 1,
+      item_quantity: order.packets,
       item_weight: 0.5,
       item_description: order.packageName,
       amount_to_collect: order.total,

@@ -5,14 +5,14 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { CirclePlay, ShoppingBag } from "lucide-react";
+import { CirclePlay, Minus, Plus, ShoppingBag } from "lucide-react";
 import { useCreateOrder } from "@/hooks/useOrders";
 import {
   createMetaEventId,
   getMetaCookies,
   trackBrowserPurchase,
 } from "@/lib/meta/client";
-import { DELIVERY_CHARGE, PRODUCTS } from "@/lib/products";
+import { DELIVERY_CHARGE, MAX_ORDER_QUANTITY, PRODUCTS } from "@/lib/products";
 import { SELECT_PACKAGE_EVENT } from "@/lib/selectPackage";
 import { toBengaliDigits } from "@/lib/numerals";
 
@@ -25,11 +25,13 @@ type FormData = {
 
 function OrderSummary({
   selectedName,
+  quantity,
   subtotal,
   total,
   compact = false,
 }: {
   selectedName: string;
+  quantity: number;
   subtotal: number;
   total: number;
   compact?: boolean;
@@ -37,7 +39,15 @@ function OrderSummary({
   return (
     <div className={compact ? "space-y-2 text-sm" : "space-y-3 text-sm"}>
       <div className="flex justify-between gap-3 text-slate-700">
-        <span className="min-w-0 flex-1 break-words">{selectedName}</span>
+        <span className="min-w-0 flex-1 break-words">
+          {selectedName}
+          {quantity > 1 ? (
+            <span lang="en" className="text-slate-500">
+              {" "}
+              × {quantity}
+            </span>
+          ) : null}
+        </span>
         <span lang="en" className="shrink-0 font-medium">
           {subtotal}৳
         </span>
@@ -61,6 +71,7 @@ function OrderSummary({
 export default function OrderForm() {
   const router = useRouter();
   const [selectedPackageId, setSelectedPackageId] = useState(PRODUCTS[0].packageId);
+  const [quantity, setQuantity] = useState(1);
   const createOrderMutation = useCreateOrder();
 
   const {
@@ -91,8 +102,16 @@ export default function OrderForm() {
   }, []);
 
   const selected = PRODUCTS.find((p) => p.packageId === selectedPackageId)!;
-  const subtotal = selected.price;
+  const subtotal = selected.price * quantity;
   const total = subtotal + DELIVERY_CHARGE;
+
+  const decreaseQuantity = () => {
+    setQuantity((prev) => Math.max(1, prev - 1));
+  };
+
+  const increaseQuantity = () => {
+    setQuantity((prev) => Math.min(MAX_ORDER_QUANTITY, prev + 1));
+  };
 
   const onSubmit = (data: FormData) => {
     const eventId = createMetaEventId();
@@ -101,6 +120,7 @@ export default function OrderForm() {
     createOrderMutation.mutate(
       {
         packageId: selected.packageId,
+        quantity,
         fullName: data.fullName,
         district: data.district,
         address: data.address,
@@ -120,6 +140,7 @@ export default function OrderForm() {
             contentName: selected.name,
           });
           reset();
+          setQuantity(1);
           router.push(`/thank-you/${result.orderId}`);
         },
         onError: (error) => {
@@ -159,6 +180,7 @@ export default function OrderForm() {
           </p>
           <OrderSummary
             selectedName={selected.name}
+            quantity={quantity}
             subtotal={subtotal}
             total={total}
             compact
@@ -219,6 +241,38 @@ export default function OrderForm() {
                     </span>
                   </label>
                 ))}
+              </div>
+
+              <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
+                <span className="text-sm font-medium text-slate-700">
+                  পরিমাণ
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={decreaseQuantity}
+                    disabled={quantity <= 1}
+                    aria-label="পরিমাণ কমান"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-slate-700 transition-colors hover:border-primary/40 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  <span
+                    lang="en"
+                    className="min-w-8 text-center text-base font-semibold text-slate-900"
+                  >
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={increaseQuantity}
+                    disabled={quantity >= MAX_ORDER_QUANTITY}
+                    aria-label="পরিমাণ বাড়ান"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-slate-700 transition-colors hover:border-primary/40 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -324,6 +378,7 @@ export default function OrderForm() {
               <div className="mt-4 hidden border-b border-slate-200 pb-4 lg:block">
                 <OrderSummary
                   selectedName={selected.name}
+                  quantity={quantity}
                   subtotal={subtotal}
                   total={total}
                 />
