@@ -98,13 +98,26 @@ export default function ThankYouContent({ orderId }: ThankYouContentProps) {
           <div className="flex justify-between gap-3">
             <span className="text-slate-500">পণ্য</span>
             <span className="text-right font-medium text-slate-800">
-              {order.packageName}
-              {order.quantity > 1 ? (
-                <span lang="en" className="text-slate-500">
-                  {" "}
-                  × {order.quantity}
+              {(order.items?.length
+                ? order.items
+                : [
+                    {
+                      packageName: order.packageName,
+                      quantity: order.quantity,
+                    },
+                  ]
+              ).map((item, index, list) => (
+                <span key={`${item.packageName}-${index}`}>
+                  {item.packageName}
+                  {item.quantity > 1 ? (
+                    <span lang="en" className="text-slate-500">
+                      {" "}
+                      × {item.quantity}
+                    </span>
+                  ) : null}
+                  {index < list.length - 1 ? ", " : null}
                 </span>
-              ) : null}
+              ))}
             </span>
           </div>
           <div className="flex justify-between gap-3">

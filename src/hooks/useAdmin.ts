@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  checkBdCourierCustomer,
   fetchAdminCouriers,
   fetchAdminOrders,
   fetchCourierHistory,
@@ -19,6 +20,8 @@ export const adminKeys = {
   couriers: () => [...adminKeys.all, "couriers"] as const,
   courierHistory: (phone: string) =>
     [...adminKeys.all, "courier-history", phone] as const,
+  bdCourierCheck: (phone: string) =>
+    [...adminKeys.all, "bd-courier-check", phone] as const,
 };
 
 export function useAdminOrders(params: AdminOrdersParams = {}) {
@@ -96,5 +99,11 @@ export function useCourierHistory(phone: string) {
     queryFn: () => fetchCourierHistory(normalized!),
     enabled: Boolean(normalized),
     staleTime: 30_000,
+  });
+}
+
+export function useBdCourierCheck() {
+  return useMutation({
+    mutationFn: (phone: string) => checkBdCourierCustomer(phone),
   });
 }

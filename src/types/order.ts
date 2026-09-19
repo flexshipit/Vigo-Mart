@@ -9,10 +9,28 @@ export type OrderStatus =
   | "delivered"
   | "cancelled";
 
-export type Order = {
-  _id?: ObjectId;
+export type OrderItemInput = {
+  packageId: string;
+  quantity: number;
+};
+
+export type OrderItem = {
   packageId: string;
   packageName: string;
+  unitPrice: number;
+  quantity: number;
+  lineTotal: number;
+};
+
+export type Order = {
+  _id?: ObjectId;
+  /** Multi-item line items. Absent on legacy single-SKU orders. */
+  items?: OrderItem[];
+  /** Denormalized: first item packageId (legacy + filters). */
+  packageId: string;
+  /** Denormalized joined label for search/display/SMS. */
+  packageName: string;
+  /** Denormalized total units across all items. */
   packets: number;
   fullName: string;
   district: string;
@@ -42,8 +60,7 @@ export type UpdateOrderPayload = {
 };
 
 export type CreateOrderPayload = {
-  packageId: string;
-  quantity: number;
+  items: OrderItemInput[];
   fullName: string;
   district: string;
   address: string;

@@ -1,4 +1,5 @@
 import type { AdminOrder } from "@/lib/api/admin";
+import { getOrderItems } from "@/lib/orderItems";
 
 const CHART_COLORS = ["#0d7c66", "#16a085", "#3b82f6", "#8b5cf6", "#f4b400"];
 
@@ -44,15 +45,19 @@ export function buildPackageChartData(orders: AdminOrder[]) {
   const map = new Map<string, { name: string; value: number; revenue: number }>();
 
   for (const order of orders) {
-    const existing = map.get(order.packageId) ?? {
-      name: order.packageName,
-      value: 0,
-      revenue: 0,
-    };
+    const items = getOrderItems(order);
 
-    existing.value += 1;
-    existing.revenue += order.total;
-    map.set(order.packageId, existing);
+    for (const item of items) {
+      const existing = map.get(item.packageId) ?? {
+        name: item.packageName,
+        value: 0,
+        revenue: 0,
+      };
+
+      existing.value += item.quantity;
+      existing.revenue += item.lineTotal;
+      map.set(item.packageId, existing);
+    }
   }
 
   return Array.from(map.values()).map((item, index) => ({

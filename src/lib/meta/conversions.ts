@@ -9,8 +9,8 @@ type TrackPurchaseInput = {
   orderId: string;
   fullName: string;
   phone: string;
-  packageId: string;
-  packageName: string;
+  contentIds: string[];
+  contentName: string;
   total: number;
   ip?: string;
   userAgent?: string;
@@ -62,8 +62,8 @@ export async function trackMetaPurchase(input: TrackPurchaseInput) {
           currency: "BDT",
           value: input.total,
           content_type: "product",
-          content_ids: [input.packageId],
-          content_name: input.packageName,
+          content_ids: input.contentIds,
+          content_name: input.contentName,
           order_id: input.orderId,
         },
       },

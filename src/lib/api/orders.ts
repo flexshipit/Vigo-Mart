@@ -12,6 +12,12 @@ export type ApiResponse<T = unknown> = {
 export type OrderSummary = {
   orderId: string;
   fullName: string;
+  items: Array<{
+    packageId: string;
+    packageName: string;
+    quantity: number;
+    lineTotal: number;
+  }>;
   packageName: string;
   quantity: number;
   total: number;

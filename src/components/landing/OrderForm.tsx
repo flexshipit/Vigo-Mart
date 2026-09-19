@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -23,35 +23,47 @@ type FormData = {
   phone: string;
 };
 
+type QuantityMap = Record<string, number>;
+
+function buildInitialQuantities(): QuantityMap {
+  const map: QuantityMap = {};
+  for (const product of PRODUCTS) {
+    map[product.packageId] = 0;
+  }
+  map[PRODUCTS[0].packageId] = 1;
+  return map;
+}
+
 function OrderSummary({
-  selectedName,
-  quantity,
-  subtotal,
+  lines,
   total,
   compact = false,
 }: {
-  selectedName: string;
-  quantity: number;
-  subtotal: number;
+  lines: Array<{ name: string; quantity: number; lineTotal: number }>;
   total: number;
   compact?: boolean;
 }) {
   return (
     <div className={compact ? "space-y-2 text-sm" : "space-y-3 text-sm"}>
-      <div className="flex justify-between gap-3 text-slate-700">
-        <span className="min-w-0 flex-1 break-words">
-          {selectedName}
-          {quantity > 1 ? (
-            <span lang="en" className="text-slate-500">
-              {" "}
-              × {quantity}
-            </span>
-          ) : null}
-        </span>
-        <span lang="en" className="shrink-0 font-medium">
-          {subtotal}৳
-        </span>
-      </div>
+      {lines.map((line) => (
+        <div
+          key={line.name}
+          className="flex justify-between gap-3 text-slate-700"
+        >
+          <span className="min-w-0 flex-1 break-words">
+            {line.name}
+            {line.quantity > 1 ? (
+              <span lang="en" className="text-slate-500">
+                {" "}
+                × {line.quantity}
+              </span>
+            ) : null}
+          </span>
+          <span lang="en" className="shrink-0 font-medium">
+            {line.lineTotal}৳
+          </span>
+        </div>
+      ))}
       <div className="flex justify-between text-slate-500">
         <span>ডেলিভারি চার্জ</span>
         <span lang="en">{DELIVERY_CHARGE}৳</span>
@@ -70,8 +82,7 @@ function OrderSummary({
 
 export default function OrderForm() {
   const router = useRouter();
-  const [selectedPackageId, setSelectedPackageId] = useState(PRODUCTS[0].packageId);
-  const [quantity, setQuantity] = useState(1);
+  const [quantities, setQuantities] = useState<QuantityMap>(buildInitialQuantities);
   const createOrderMutation = useCreateOrder();
 
   const {
@@ -83,9 +94,12 @@ export default function OrderForm() {
 
   useEffect(() => {
     const applyPackage = (packageId: string) => {
-      if (PRODUCTS.some((product) => product.packageId === packageId)) {
-        setSelectedPackageId(packageId);
-      }
+      if (!PRODUCTS.some((product) => product.packageId === packageId)) return;
+
+      setQuantities((prev) => ({
+        ...prev,
+        [packageId]: Math.max(1, prev[packageId] ?? 0),
+      }));
     };
 
     const onSelect = (event: Event) => {
@@ -101,26 +115,52 @@ export default function OrderForm() {
     return () => window.removeEventListener(SELECT_PACKAGE_EVENT, onSelect);
   }, []);
 
-  const selected = PRODUCTS.find((p) => p.packageId === selectedPackageId)!;
-  const subtotal = selected.price * quantity;
+  const selectedLines = useMemo(
+    () =>
+      PRODUCTS.filter((product) => (quantities[product.packageId] ?? 0) > 0).map(
+        (product) => {
+          const quantity = quantities[product.packageId];
+          return {
+            packageId: product.packageId,
+            name: product.name,
+            image: product.image,
+            quantity,
+            lineTotal: product.price * quantity,
+          };
+        }
+      ),
+    [quantities]
+  );
+
+  const subtotal = selectedLines.reduce((sum, line) => sum + line.lineTotal, 0);
   const total = subtotal + DELIVERY_CHARGE;
+  const previewImage =
+    selectedLines[0]?.image ?? PRODUCTS[0].image;
+  const previewName =
+    selectedLines[0]?.name ?? PRODUCTS[0].name;
 
-  const decreaseQuantity = () => {
-    setQuantity((prev) => Math.max(1, prev - 1));
-  };
-
-  const increaseQuantity = () => {
-    setQuantity((prev) => Math.min(MAX_ORDER_QUANTITY, prev + 1));
+  const setQuantity = (packageId: string, next: number) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [packageId]: Math.max(0, Math.min(MAX_ORDER_QUANTITY, next)),
+    }));
   };
 
   const onSubmit = (data: FormData) => {
+    if (selectedLines.length === 0) {
+      toast.error("কমপক্ষে একটি পণ্য সিলেক্ট করুন");
+      return;
+    }
+
     const eventId = createMetaEventId();
     const { fbp, fbc } = getMetaCookies();
 
     createOrderMutation.mutate(
       {
-        packageId: selected.packageId,
-        quantity,
+        items: selectedLines.map((line) => ({
+          packageId: line.packageId,
+          quantity: line.quantity,
+        })),
         fullName: data.fullName,
         district: data.district,
         address: data.address,
@@ -136,11 +176,17 @@ export default function OrderForm() {
           trackBrowserPurchase({
             eventId,
             value: total,
-            contentIds: [selected.packageId],
-            contentName: selected.name,
+            contentIds: selectedLines.map((line) => line.packageId),
+            contentName: selectedLines
+              .map((line) =>
+                line.quantity > 1
+                  ? `${line.name} × ${line.quantity}`
+                  : line.name
+              )
+              .join(", "),
           });
           reset();
-          setQuantity(1);
+          setQuantities(buildInitialQuantities());
           router.push(`/thank-you/${result.orderId}`);
         },
         onError: (error) => {
@@ -158,15 +204,15 @@ export default function OrderForm() {
             অর্ডার করুন
           </h2>
           <p className="mt-2 text-sm text-slate-600 sm:text-base lg:text-lg">
-            পণ্য বেছে নিন, সঠিক তথ্য দিন — ক্যাশ অন ডেলিভারিতে পাবেন
+            একাধিক পণ্য বেছে নিন, সঠিক তথ্য দিন — ক্যাশ অন ডেলিভারিতে পাবেন
           </p>
         </div>
 
         <div className="mx-auto mt-6 max-w-5xl overflow-hidden rounded-md border border-primary/20 lg:hidden">
           <div className="relative aspect-[16/9] w-full bg-maroon">
             <Image
-              src={selected.image}
-              alt={`${selected.name} অর্ডার`}
+              src={previewImage}
+              alt={`${previewName} অর্ডার`}
               fill
               sizes="100vw"
               className="object-cover"
@@ -178,13 +224,15 @@ export default function OrderForm() {
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">
             অর্ডার সামারি
           </p>
-          <OrderSummary
-            selectedName={selected.name}
-            quantity={quantity}
-            subtotal={subtotal}
-            total={total}
-            compact
-          />
+          {selectedLines.length === 0 ? (
+            <p className="text-sm text-slate-500">কোনো পণ্য সিলেক্ট করা হয়নি</p>
+          ) : (
+            <OrderSummary
+              lines={selectedLines}
+              total={total}
+              compact
+            />
+          )}
         </div>
 
         <form
@@ -199,80 +247,69 @@ export default function OrderForm() {
               </h3>
 
               <div className="space-y-3">
-                {PRODUCTS.map((product) => (
-                  <label
-                    key={product.packageId}
-                    className={`flex cursor-pointer items-center gap-3 rounded-md border p-3 transition-colors sm:p-4 ${
-                      selectedPackageId === product.packageId
-                        ? "border-primary/40 bg-primary/5"
-                        : "border-slate-200 hover:border-primary/20"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="packageId"
-                      value={product.packageId}
-                      checked={selectedPackageId === product.packageId}
-                      onChange={() => setSelectedPackageId(product.packageId)}
-                      className="accent-primary"
-                    />
-                    <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md border border-primary/15 bg-cream">
-                      <Image
-                        src={product.image}
-                        alt={product.name}
-                        fill
-                        sizes="56px"
-                        className="object-cover"
-                      />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium leading-snug text-slate-900 lg:text-base">
-                        {product.name}
-                      </p>
-                      <p className="mt-0.5 text-xs text-slate-500 lg:text-sm">
-                        {toBengaliDigits(product.price)} টাকা
-                      </p>
-                    </div>
-                    <span
-                      lang="en"
-                      className="shrink-0 text-sm font-bold text-primary"
-                    >
-                      {product.price}৳
-                    </span>
-                  </label>
-                ))}
-              </div>
+                {PRODUCTS.map((product) => {
+                  const quantity = quantities[product.packageId] ?? 0;
+                  const selected = quantity > 0;
 
-              <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
-                <span className="text-sm font-medium text-slate-700">
-                  পরিমাণ
-                </span>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={decreaseQuantity}
-                    disabled={quantity <= 1}
-                    aria-label="পরিমাণ কমান"
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-slate-700 transition-colors hover:border-primary/40 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    <Minus className="h-4 w-4" />
-                  </button>
-                  <span
-                    lang="en"
-                    className="min-w-8 text-center text-base font-semibold text-slate-900"
-                  >
-                    {quantity}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={increaseQuantity}
-                    disabled={quantity >= MAX_ORDER_QUANTITY}
-                    aria-label="পরিমাণ বাড়ান"
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-slate-700 transition-colors hover:border-primary/40 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </button>
-                </div>
+                  return (
+                    <div
+                      key={product.packageId}
+                      className={`flex items-center gap-3 rounded-md border p-3 transition-colors sm:p-4 ${
+                        selected
+                          ? "border-primary/40 bg-primary/5"
+                          : "border-slate-200"
+                      }`}
+                    >
+                      <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md border border-primary/15 bg-cream">
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          fill
+                          sizes="56px"
+                          className="object-cover"
+                        />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium leading-snug text-slate-900 lg:text-base">
+                          {product.name}
+                        </p>
+                        <p className="mt-0.5 text-xs text-slate-500 lg:text-sm">
+                          {toBengaliDigits(product.price)} টাকা
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setQuantity(product.packageId, quantity - 1)
+                          }
+                          disabled={quantity <= 0}
+                          aria-label={`${product.name} পরিমাণ কমান`}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-700 transition-colors hover:border-primary/40 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-40 sm:h-9 sm:w-9"
+                        >
+                          <Minus className="h-4 w-4" />
+                        </button>
+                        <span
+                          lang="en"
+                          className="min-w-7 text-center text-sm font-semibold text-slate-900 sm:min-w-8 sm:text-base"
+                        >
+                          {quantity}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setQuantity(product.packageId, quantity + 1)
+                          }
+                          disabled={quantity >= MAX_ORDER_QUANTITY}
+                          aria-label={`${product.name} পরিমাণ বাড়ান`}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-700 transition-colors hover:border-primary/40 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-40 sm:h-9 sm:w-9"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -363,8 +400,8 @@ export default function OrderForm() {
             <div className="rounded-md border border-primary/15 bg-white p-4 shadow-sm sm:p-6 lg:sticky lg:top-20">
               <div className="relative mb-4 hidden aspect-[4/3] overflow-hidden rounded-md bg-maroon lg:block">
                 <Image
-                  src={selected.image}
-                  alt={`${selected.name} অর্ডার`}
+                  src={previewImage}
+                  alt={`${previewName} অর্ডার`}
                   fill
                   sizes="(max-width: 1024px) 100vw, 320px"
                   className="object-cover"
@@ -376,17 +413,23 @@ export default function OrderForm() {
               </h3>
 
               <div className="mt-4 hidden border-b border-slate-200 pb-4 lg:block">
-                <OrderSummary
-                  selectedName={selected.name}
-                  quantity={quantity}
-                  subtotal={subtotal}
-                  total={total}
-                />
+                {selectedLines.length === 0 ? (
+                  <p className="text-sm text-slate-500">
+                    কমপক্ষে একটি পণ্য সিলেক্ট করুন
+                  </p>
+                ) : (
+                  <OrderSummary
+                    lines={selectedLines}
+                    total={total}
+                  />
+                )}
               </div>
 
               <button
                 type="submit"
-                disabled={createOrderMutation.isPending}
+                disabled={
+                  createOrderMutation.isPending || selectedLines.length === 0
+                }
                 className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary py-3.5 text-sm font-semibold text-white transition-colors hover:bg-secondary disabled:opacity-60 sm:mt-6"
               >
                 {createOrderMutation.isPending ? (

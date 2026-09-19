@@ -1,4 +1,9 @@
 import { getCourierAdapter, isValidCourierId } from "@/lib/couriers";
+import {
+  checkBdCourierCustomer,
+  isBdCourierConfigured,
+} from "@/lib/bdCourier";
+import type { BdCourierCheckResult } from "@/types/bdCourier";
 import type { CourierPhoneHistoryResult } from "@/types/courier";
 import type { Order } from "@/types/order";
 
@@ -23,6 +28,15 @@ export async function fetchCourierApiHistories(
   ]);
 
   return { pathao, steadfast };
+}
+
+export async function fetchBdCourierHistory(
+  phone: string
+): Promise<BdCourierCheckResult | null> {
+  if (!isBdCourierConfigured()) return null;
+
+  const result = await checkBdCourierCustomer(phone);
+  return result.status === "success" ? result : null;
 }
 
 export async function fetchLiveCourierStatuses(

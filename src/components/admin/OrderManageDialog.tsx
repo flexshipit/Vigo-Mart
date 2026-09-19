@@ -21,6 +21,7 @@ import {
   useUpdateOrder,
 } from "@/hooks/useAdmin";
 import type { AdminOrder } from "@/lib/api/admin";
+import { formatAdminPackageLabel } from "@/lib/admin/formatPackageLabel";
 import { getCourierOrderId } from "@/lib/courier/utils";
 import { ORDER_STATUSES, ORDER_STATUS_LABELS } from "@/lib/orderStatus";
 import type { OrderStatus } from "@/types/order";
@@ -172,13 +173,7 @@ export default function OrderManageDialog({
             <div className="mt-3 flex justify-between gap-3">
               <span className="text-slate-500">Package</span>
               <span className="text-right font-medium text-slate-800">
-                {order.packageName}
-                {order.packets > 1 ? (
-                  <span lang="en" className="text-slate-500">
-                    {" "}
-                    × {order.packets}
-                  </span>
-                ) : null}
+                {formatAdminPackageLabel(order)}
               </span>
             </div>
             <div className="mt-3 flex justify-between gap-3">

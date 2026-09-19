@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/dbConnect";
 import { serializeOrder } from "@/lib/admin/serializeOrder";
 import {
+  fetchBdCourierHistory,
   fetchCourierApiHistories,
   fetchLiveCourierStatuses,
 } from "@/lib/courier/history";
@@ -20,7 +21,10 @@ export async function GET(request: Request) {
 
     if (!phone) {
       return NextResponse.json(
-        { success: false, message: "Enter a valid 11-digit Bangladesh phone number" },
+        {
+          success: false,
+          message: "Enter a valid 11-digit Bangladesh phone number",
+        },
         { status: 400 }
       );
     }
@@ -31,9 +35,10 @@ export async function GET(request: Request) {
       .sort({ createdAt: -1 })
       .toArray();
 
-    const [courierApis, liveStatuses] = await Promise.all([
+    const [courierApis, liveStatuses, bdCourier] = await Promise.all([
       fetchCourierApiHistories(phone),
       fetchLiveCourierStatuses(list),
+      fetchBdCourierHistory(phone),
     ]);
 
     const serialized = list.map((order) => {
@@ -46,7 +51,9 @@ export async function GET(request: Request) {
       };
     });
 
-    const withCourier = serialized.filter((order) => order.courierShipment?.trackingId);
+    const withCourier = serialized.filter(
+      (order) => order.courierShipment?.trackingId
+    );
 
     return NextResponse.json({
       success: true,
@@ -56,6 +63,7 @@ export async function GET(request: Request) {
         totalOrders: serialized.length,
         courierShipments: withCourier.length,
         courierApis,
+        bdCourier,
         orders: serialized,
       },
     });

@@ -18,6 +18,7 @@ import OrderAmountBreakdown from "@/components/admin/OrderAmountBreakdown";
 import OrderStatusBadge from "@/components/admin/OrderStatusBadge";
 import DashboardCharts from "@/components/admin/charts/DashboardCharts";
 import { useAdminOrders } from "@/hooks/useAdmin";
+import { formatAdminPackageLabel } from "@/lib/admin/formatPackageLabel";
 import { getAdminPageMeta } from "@/lib/admin/navigation";
 import { SITE } from "@/lib/site";
 
@@ -178,8 +179,7 @@ export default function AdminDashboardPage() {
                       </div>
                     </td>
                     <td className="px-4 py-4 text-slate-600 sm:px-6">
-                      {order.packageName}
-                      {order.packets > 1 ? ` × ${order.packets}` : ""}
+                      {formatAdminPackageLabel(order)}
                     </td>
                     <td
                       lang="en"

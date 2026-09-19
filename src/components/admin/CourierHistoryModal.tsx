@@ -1,9 +1,11 @@
 "use client";
 
 import { ExternalLink, History, Loader2, X } from "lucide-react";
+import BdCourierCheckResultView from "@/components/admin/BdCourierCheckResultView";
 import OrderAmountBreakdown from "@/components/admin/OrderAmountBreakdown";
 import OrderStatusBadge from "@/components/admin/OrderStatusBadge";
 import { useCourierHistory } from "@/hooks/useAdmin";
+import { getOrderItemsLabel } from "@/lib/orderItems";
 import type { CourierPhoneHistoryResult } from "@/types/courier";
 import { SITE } from "@/lib/site";
 
@@ -102,7 +104,7 @@ export default function CourierHistoryModal({
   return (
     <div className="fixed inset-0 z-[130] flex items-end justify-center bg-slate-950/60 p-4 sm:items-center">
       <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
-      <div className="relative z-10 flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-md border border-slate-200 bg-white shadow-xl">
+      <div className="relative z-10 flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-md border border-slate-200 bg-white shadow-xl">
         <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
           <div className="flex items-center gap-2">
             <History className="h-5 w-5 text-primary" />
@@ -176,6 +178,15 @@ export default function CourierHistoryModal({
                 />
               </div>
 
+              {data.bdCourier ? (
+                <div className="rounded-md border border-slate-200 bg-slate-50/70 p-4">
+                  <h3 className="mb-4 text-sm font-semibold text-slate-900">
+                    BD Courier Risk Check
+                  </h3>
+                  <BdCourierCheckResultView result={data.bdCourier} />
+                </div>
+              ) : null}
+
               <div>
                 <h3 className="mb-3 text-sm font-semibold text-slate-900">
                   {SITE.name} Order History
@@ -196,7 +207,7 @@ export default function CourierHistoryModal({
                           <div>
                             <div className="flex flex-wrap items-center gap-2">
                               <p className="font-medium text-slate-900">
-                                {order.packageName}
+                                {getOrderItemsLabel(order)}
                               </p>
                               <OrderStatusBadge status={order.status} />
                             </div>

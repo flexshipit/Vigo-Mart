@@ -15,6 +15,7 @@ import OrderManageDialog from "@/components/admin/OrderManageDialog";
 import OrderStatusBadge from "@/components/admin/OrderStatusBadge";
 import { useAdminOrders } from "@/hooks/useAdmin";
 import type { AdminOrder } from "@/lib/api/admin";
+import { formatAdminPackageLabel } from "@/lib/admin/formatPackageLabel";
 import type { OrderDatePreset } from "@/lib/admin/orderDateRange";
 import { getAdminPageMeta } from "@/lib/admin/navigation";
 
@@ -191,8 +192,7 @@ export default function AdminOrdersPage() {
                               {order.fullName}
                             </p>
                             <p className="mt-0.5 text-xs text-slate-500">
-                              {order.packageName}
-                              {order.packets > 1 ? ` × ${order.packets}` : ""}
+                              {formatAdminPackageLabel(order)}
                             </p>
                           </div>
                         </div>
@@ -273,8 +273,7 @@ export default function AdminOrdersPage() {
                       <div className="mt-3 flex flex-wrap items-center gap-2">
                         <OrderStatusBadge status={order.status} />
                         <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600">
-                          {order.packageName}
-                          {order.packets > 1 ? ` × ${order.packets}` : ""}
+                          {formatAdminPackageLabel(order)}
                         </span>
                         {order.courierName && (
                           <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-medium text-blue-700">

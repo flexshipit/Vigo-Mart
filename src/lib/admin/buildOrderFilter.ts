@@ -12,6 +12,7 @@ export function buildOrderSearchFilter(query: string): Filter<Order> {
       { fullName: regex },
       { phone: regex },
       { packageName: regex },
+      { "items.packageName": regex },
       { district: regex },
       { address: regex },
       { courierName: regex },

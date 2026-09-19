@@ -1,5 +1,6 @@
 import { getAdminToken } from "@/lib/auth/adminAuth";
 import type { OrderDatePreset } from "@/lib/admin/orderDateRange";
+import type { BdCourierCheckResult } from "@/types/bdCourier";
 import type { CourierPhoneHistoryResult, CourierShipment } from "@/types/courier";
 import type { OrderStatus, UpdateOrderPayload } from "@/types/order";
 
@@ -42,6 +43,13 @@ export type AdminCourierProvider = {
 
 export type AdminOrder = {
   _id: string;
+  items?: Array<{
+    packageId: string;
+    packageName: string;
+    unitPrice: number;
+    quantity: number;
+    lineTotal: number;
+  }>;
   packageId: string;
   packageName: string;
   packets: number;
@@ -171,6 +179,7 @@ export type CourierHistoryResult = {
     pathao: CourierPhoneHistoryResult;
     steadfast: CourierPhoneHistoryResult;
   };
+  bdCourier: BdCourierCheckResult | null;
   orders: CourierHistoryOrder[];
 };
 
@@ -178,6 +187,17 @@ export async function fetchCourierHistory(phone: string) {
   const search = new URLSearchParams({ phone });
   const data = await adminFetch<{ data: CourierHistoryResult }>(
     `/api/admin/courier-history?${search.toString()}`
+  );
+  return data.data;
+}
+
+export async function checkBdCourierCustomer(phone: string) {
+  const data = await adminFetch<{ data: BdCourierCheckResult }>(
+    "/api/admin/courier-check",
+    {
+      method: "POST",
+      body: JSON.stringify({ phone }),
+    }
   );
   return data.data;
 }

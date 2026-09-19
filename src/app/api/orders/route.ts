@@ -46,10 +46,17 @@ export async function POST(request: Request) {
       );
     }
 
-    const { product, quantity, fullName, district, address, phone } =
-      validation;
+    const {
+      items,
+      packageLabel,
+      totalPackets,
+      subtotal,
+      fullName,
+      district,
+      address,
+      phone,
+    } = validation;
     const now = new Date();
-    const subtotal = product.price * quantity;
     const total = subtotal + DELIVERY_CHARGE;
 
     const orders = await dbConnect<Order>("orders");
@@ -73,9 +80,10 @@ export async function POST(request: Request) {
       `purchase_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 
     const order: Order = {
-      packageId: product.packageId,
-      packageName: product.name,
-      packets: quantity,
+      items,
+      packageId: items[0].packageId,
+      packageName: packageLabel,
+      packets: totalPackets,
       fullName,
       district,
       address,
@@ -99,8 +107,8 @@ export async function POST(request: Request) {
       orderId,
       fullName,
       phone,
-      packageId: product.packageId,
-      packageName: product.name,
+      contentIds: items.map((item) => item.packageId),
+      contentName: packageLabel,
       total,
       ip,
       userAgent: request.headers.get("user-agent") ?? undefined,
