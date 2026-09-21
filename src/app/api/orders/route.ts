@@ -8,6 +8,7 @@ import {
   ORDER_COOLDOWN_MS,
 } from "@/lib/orderRateLimit";
 import { trackMetaPurchase } from "@/lib/meta/conversions";
+import { trackTikTokPurchase } from "@/lib/tiktok/conversions";
 import { validateOrderPayload } from "@/lib/orderValidation";
 import { DELIVERY_CHARGE } from "@/lib/products";
 import type { CreateOrderPayload, Order } from "@/types/order";
@@ -118,6 +119,28 @@ export async function POST(request: Request) {
     }).then((metaResult) => {
       if (!metaResult.success) {
         console.warn("[Meta CAPI]", metaResult.message);
+      }
+    });
+
+    void trackTikTokPurchase({
+      eventId: metaEventId,
+      orderId,
+      phone,
+      contents: items.map((item) => ({
+        contentId: item.packageId,
+        contentName: item.packageName,
+        quantity: item.quantity,
+        price: item.unitPrice,
+      })),
+      total,
+      ip,
+      userAgent: request.headers.get("user-agent") ?? undefined,
+      ttp: body.ttp,
+      ttclid: body.ttclid,
+      eventSourceUrl: body.eventSourceUrl,
+    }).then((tiktokResult) => {
+      if (!tiktokResult.success) {
+        console.warn("[TikTok Events API]", tiktokResult.message);
       }
     });
 

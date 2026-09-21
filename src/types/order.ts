@@ -68,5 +68,7 @@ export type CreateOrderPayload = {
   eventId?: string;
   fbp?: string;
   fbc?: string;
+  ttp?: string;
+  ttclid?: string;
   eventSourceUrl?: string;
 };

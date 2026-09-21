@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { CirclePlay, Minus, Plus, ShoppingBag } from "lucide-react";
+import { Check, CirclePlay, Minus, Plus, ShoppingBag } from "lucide-react";
 import { useCreateOrder } from "@/hooks/useOrders";
 import {
   createMetaEventId,
@@ -15,6 +15,13 @@ import {
 import { DELIVERY_CHARGE, MAX_ORDER_QUANTITY, PRODUCTS } from "@/lib/products";
 import { SELECT_PACKAGE_EVENT } from "@/lib/selectPackage";
 import { toBengaliDigits } from "@/lib/numerals";
+import {
+  createTikTokEventId,
+  getTikTokCookies,
+  trackTikTokAddToCart,
+  trackTikTokInitiateCheckout,
+  trackTikTokPurchase,
+} from "@/lib/tiktok/client";
 
 type FormData = {
   fullName: string;
@@ -24,13 +31,21 @@ type FormData = {
 };
 
 type QuantityMap = Record<string, number>;
+type SelectedMap = Record<string, boolean>;
 
 function buildInitialQuantities(): QuantityMap {
   const map: QuantityMap = {};
   for (const product of PRODUCTS) {
-    map[product.packageId] = 0;
+    map[product.packageId] = 1;
   }
-  map[PRODUCTS[0].packageId] = 1;
+  return map;
+}
+
+function buildInitialSelected(): SelectedMap {
+  const map: SelectedMap = {};
+  for (const product of PRODUCTS) {
+    map[product.packageId] = false;
+  }
   return map;
 }
 
@@ -83,6 +98,7 @@ function OrderSummary({
 export default function OrderForm() {
   const router = useRouter();
   const [quantities, setQuantities] = useState<QuantityMap>(buildInitialQuantities);
+  const [selected, setSelected] = useState<SelectedMap>(buildInitialSelected);
   const createOrderMutation = useCreateOrder();
 
   const {
@@ -98,8 +114,30 @@ export default function OrderForm() {
 
       setQuantities((prev) => ({
         ...prev,
-        [packageId]: Math.max(1, prev[packageId] ?? 0),
+        [packageId]: Math.max(1, prev[packageId] ?? 1),
       }));
+
+      let newlySelected = false;
+      setSelected((prev) => {
+        if (prev[packageId]) return prev;
+        newlySelected = true;
+        return { ...prev, [packageId]: true };
+      });
+
+      const product = PRODUCTS.find((item) => item.packageId === packageId);
+      if (product && newlySelected) {
+        trackTikTokAddToCart({
+          contents: [
+            {
+              contentId: product.packageId,
+              contentName: product.name,
+              quantity: 1,
+              price: product.price,
+            },
+          ],
+          value: product.price,
+        });
+      }
     };
 
     const onSelect = (event: Event) => {
@@ -117,33 +155,83 @@ export default function OrderForm() {
 
   const selectedLines = useMemo(
     () =>
-      PRODUCTS.filter((product) => (quantities[product.packageId] ?? 0) > 0).map(
+      PRODUCTS.filter((product) => selected[product.packageId]).map(
         (product) => {
-          const quantity = quantities[product.packageId];
+          const quantity = Math.max(1, quantities[product.packageId] ?? 1);
           return {
             packageId: product.packageId,
             name: product.name,
             image: product.image,
+            price: product.price,
             quantity,
             lineTotal: product.price * quantity,
           };
         }
       ),
-    [quantities]
+    [quantities, selected]
   );
 
   const subtotal = selectedLines.reduce((sum, line) => sum + line.lineTotal, 0);
   const total = subtotal + DELIVERY_CHARGE;
-  const previewImage =
-    selectedLines[0]?.image ?? PRODUCTS[0].image;
-  const previewName =
-    selectedLines[0]?.name ?? PRODUCTS[0].name;
+  const previewImage = selectedLines[0]?.image ?? PRODUCTS[0].image;
+  const previewName = selectedLines[0]?.name ?? PRODUCTS[0].name;
 
   const setQuantity = (packageId: string, next: number) => {
     setQuantities((prev) => ({
       ...prev,
-      [packageId]: Math.max(0, Math.min(MAX_ORDER_QUANTITY, next)),
+      [packageId]: Math.max(1, Math.min(MAX_ORDER_QUANTITY, next)),
     }));
+  };
+
+  const toggleSelected = (packageId: string) => {
+    const product = PRODUCTS.find((item) => item.packageId === packageId);
+    if (!product) return;
+
+    setSelected((prev) => {
+      const nextChecked = !prev[packageId];
+
+      if (nextChecked) {
+        const quantity = Math.max(1, quantities[packageId] ?? 1);
+        trackTikTokAddToCart({
+          contents: [
+            {
+              contentId: product.packageId,
+              contentName: product.name,
+              quantity,
+              price: product.price,
+            },
+          ],
+          value: product.price * quantity,
+        });
+      }
+
+      return { ...prev, [packageId]: nextChecked };
+    });
+  };
+
+  const bumpQuantity = (packageId: string, delta: number) => {
+    if (!selected[packageId]) return;
+
+    const current = Math.max(1, quantities[packageId] ?? 1);
+    const next = Math.max(1, Math.min(MAX_ORDER_QUANTITY, current + delta));
+    if (next === current) return;
+
+    setQuantity(packageId, next);
+
+    const product = PRODUCTS.find((item) => item.packageId === packageId);
+    if (product && delta > 0) {
+      trackTikTokAddToCart({
+        contents: [
+          {
+            contentId: product.packageId,
+            contentName: product.name,
+            quantity: next,
+            price: product.price,
+          },
+        ],
+        value: product.price * next,
+      });
+    }
   };
 
   const onSubmit = (data: FormData) => {
@@ -153,7 +241,22 @@ export default function OrderForm() {
     }
 
     const eventId = createMetaEventId();
+    const checkoutEventId = createTikTokEventId("checkout");
     const { fbp, fbc } = getMetaCookies();
+    const { ttp, ttclid } = getTikTokCookies();
+
+    const tiktokContents = selectedLines.map((line) => ({
+      contentId: line.packageId,
+      contentName: line.name,
+      quantity: line.quantity,
+      price: line.price,
+    }));
+
+    trackTikTokInitiateCheckout({
+      eventId: checkoutEventId,
+      contents: tiktokContents,
+      value: total,
+    });
 
     createOrderMutation.mutate(
       {
@@ -168,6 +271,8 @@ export default function OrderForm() {
         eventId,
         fbp,
         fbc,
+        ttp,
+        ttclid,
         eventSourceUrl:
           typeof window !== "undefined" ? window.location.href : undefined,
       },
@@ -185,8 +290,14 @@ export default function OrderForm() {
               )
               .join(", "),
           });
+          trackTikTokPurchase({
+            eventId,
+            contents: tiktokContents,
+            value: total,
+          });
           reset();
           setQuantities(buildInitialQuantities());
+          setSelected(buildInitialSelected());
           router.push(`/thank-you/${result.orderId}`);
         },
         onError: (error) => {
@@ -204,7 +315,7 @@ export default function OrderForm() {
             অর্ডার করুন
           </h2>
           <p className="mt-2 text-sm text-slate-600 sm:text-base lg:text-lg">
-            একাধিক পণ্য বেছে নিন, সঠিক তথ্য দিন — ক্যাশ অন ডেলিভারিতে পাবেন
+            পণ্য সিলেক্ট করে পরিমাণ বাড়ান — ক্যাশ অন ডেলিভারিতে পাবেন
           </p>
         </div>
 
@@ -227,11 +338,7 @@ export default function OrderForm() {
           {selectedLines.length === 0 ? (
             <p className="text-sm text-slate-500">কোনো পণ্য সিলেক্ট করা হয়নি</p>
           ) : (
-            <OrderSummary
-              lines={selectedLines}
-              total={total}
-              compact
-            />
+            <OrderSummary lines={selectedLines} total={total} compact />
           )}
         </div>
 
@@ -248,18 +355,33 @@ export default function OrderForm() {
 
               <div className="space-y-3">
                 {PRODUCTS.map((product) => {
-                  const quantity = quantities[product.packageId] ?? 0;
-                  const selected = quantity > 0;
+                  const quantity = quantities[product.packageId] ?? 1;
+                  const isSelected = Boolean(selected[product.packageId]);
 
                   return (
                     <div
                       key={product.packageId}
                       className={`flex items-center gap-3 rounded-md border p-3 transition-colors sm:p-4 ${
-                        selected
+                        isSelected
                           ? "border-primary/40 bg-primary/5"
                           : "border-slate-200"
                       }`}
                     >
+                      <button
+                        type="button"
+                        role="checkbox"
+                        aria-checked={isSelected}
+                        aria-label={`${product.name} সিলেক্ট করুন`}
+                        onClick={() => toggleSelected(product.packageId)}
+                        className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-colors sm:h-6 sm:w-6 ${
+                          isSelected
+                            ? "border-primary bg-primary text-white"
+                            : "border-slate-300 bg-white text-transparent hover:border-primary/50"
+                        }`}
+                      >
+                        <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={3} />
+                      </button>
+
                       <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md border border-primary/15 bg-cream">
                         <Image
                           src={product.image}
@@ -277,17 +399,15 @@ export default function OrderForm() {
                           {toBengaliDigits(product.price)} টাকা
                         </p>
                       </div>
-                      <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+                      <div className="flex shrink-0 flex-col items-center gap-0.5 sm:gap-1">
                         <button
                           type="button"
-                          onClick={() =>
-                            setQuantity(product.packageId, quantity - 1)
-                          }
-                          disabled={quantity <= 0}
+                          onClick={() => bumpQuantity(product.packageId, -1)}
+                          disabled={!isSelected || quantity <= 1}
                           aria-label={`${product.name} পরিমাণ কমান`}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-700 transition-colors hover:border-primary/40 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-40 sm:h-9 sm:w-9"
+                          className="inline-flex h-7 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-700 transition-colors hover:border-primary/40 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-40 sm:h-8 sm:w-9"
                         >
-                          <Minus className="h-4 w-4" />
+                          <Minus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </button>
                         <span
                           lang="en"
@@ -297,14 +417,12 @@ export default function OrderForm() {
                         </span>
                         <button
                           type="button"
-                          onClick={() =>
-                            setQuantity(product.packageId, quantity + 1)
-                          }
-                          disabled={quantity >= MAX_ORDER_QUANTITY}
+                          onClick={() => bumpQuantity(product.packageId, 1)}
+                          disabled={!isSelected || quantity >= MAX_ORDER_QUANTITY}
                           aria-label={`${product.name} পরিমাণ বাড়ান`}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-700 transition-colors hover:border-primary/40 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-40 sm:h-9 sm:w-9"
+                          className="inline-flex h-7 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-700 transition-colors hover:border-primary/40 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-40 sm:h-8 sm:w-9"
                         >
-                          <Plus className="h-4 w-4" />
+                          <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </button>
                       </div>
                     </div>
@@ -418,10 +536,7 @@ export default function OrderForm() {
                     কমপক্ষে একটি পণ্য সিলেক্ট করুন
                   </p>
                 ) : (
-                  <OrderSummary
-                    lines={selectedLines}
-                    total={total}
-                  />
+                  <OrderSummary lines={selectedLines} total={total} />
                 )}
               </div>
 
