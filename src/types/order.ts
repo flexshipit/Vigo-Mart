@@ -49,6 +49,8 @@ export type Order = {
   statusUpdatedAt?: Date;
   smsSent?: boolean;
   smsSentAt?: Date;
+  /** Notification types already successfully claimed/sent (duplicate prevention). */
+  smsNotifications?: string[];
   metaEventId?: string;
   riderNote?: string;
 };

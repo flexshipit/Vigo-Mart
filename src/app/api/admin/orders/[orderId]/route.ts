@@ -5,6 +5,8 @@ import { serializeOrder } from "@/lib/admin/serializeOrder";
 import { requireAdmin } from "@/lib/auth/requireAdmin";
 import { getCourierById, isValidCourierId } from "@/lib/couriers";
 import { isOrderStatus } from "@/lib/orderStatus";
+import { sendOrderNotificationSms } from "@/lib/sms/orderNotifications";
+import { notificationTypeForStatus } from "@/lib/sms/templates";
 import type { Order, UpdateOrderPayload } from "@/types/order";
 
 type RouteContext = {
@@ -47,7 +49,11 @@ export async function PATCH(request: Request, context: RouteContext) {
 
     let courierName: string | undefined;
 
-    if (body.courierId !== undefined && body.courierId !== null && body.courierId !== "") {
+    if (
+      body.courierId !== undefined &&
+      body.courierId !== null &&
+      body.courierId !== ""
+    ) {
       if (!isValidCourierId(body.courierId)) {
         return NextResponse.json(
           { success: false, message: "Invalid courier" },
@@ -67,6 +73,10 @@ export async function PATCH(request: Request, context: RouteContext) {
         { status: 404 }
       );
     }
+
+    const previousStatus = existing.status;
+    const statusChanged =
+      body.status !== undefined && body.status !== previousStatus;
 
     const setFields: Partial<Order> = { statusUpdatedAt: new Date() };
     const unsetFields: Record<string, ""> = {};
@@ -107,11 +117,32 @@ export async function PATCH(request: Request, context: RouteContext) {
       }
     );
 
+    let smsMessage: string | undefined;
+
+    if (statusChanged && body.status) {
+      const smsResult = await sendOrderNotificationSms({
+        orderId,
+        phone: existing.phone,
+        notificationType: notificationTypeForStatus(body.status),
+      });
+
+      if (smsResult.skipped) {
+        smsMessage = undefined;
+      } else if (smsResult.alreadySent) {
+        smsMessage = "Order updated successfully.";
+      } else if (smsResult.success) {
+        smsMessage = "Order updated successfully. SMS notification sent.";
+      } else {
+        smsMessage =
+          "Order updated successfully, but SMS notification could not be sent.";
+      }
+    }
+
     const updated = await orders.findOne({ _id: objectId });
 
     return NextResponse.json({
       success: true,
-      message: "Order updated successfully",
+      message: smsMessage || "Order updated successfully",
       data: updated ? serializeOrder(updated) : null,
     });
   } catch (error) {

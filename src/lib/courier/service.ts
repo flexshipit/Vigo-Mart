@@ -1,9 +1,8 @@
 import { ObjectId } from "mongodb";
 import { dbConnect } from "@/lib/dbConnect";
 import { getCourierAdapter, isValidCourierId } from "@/lib/couriers";
-import {
-  mapCourierStatusToOrderStatus,
-} from "@/lib/courier/statusLabels";
+import { mapCourierStatusToOrderStatus } from "@/lib/courier/statusLabels";
+import { queueOrderStatusSms } from "@/lib/sms/orderNotifications";
 import type { CourierShipment } from "@/types/courier";
 import type { Order } from "@/types/order";
 
@@ -64,7 +63,9 @@ export async function sendOrderToCourier(orderId: string) {
     trackingUrl: result.trackingUrl,
   };
 
+  const previousStatus = order.status;
   const mappedStatus = mapCourierStatusToOrderStatus(shipment.status);
+  const nextStatus = mappedStatus ?? "shipped";
 
   await orders.updateOne(
     { _id: objectId },
@@ -72,11 +73,18 @@ export async function sendOrderToCourier(orderId: string) {
       $set: {
         courierShipment: shipment,
         courierName: adapter.name,
-        status: mappedStatus ?? "shipped",
+        status: nextStatus,
         statusUpdatedAt: new Date(),
       },
     }
   );
+
+  queueOrderStatusSms({
+    orderId,
+    phone: order.phone,
+    previousStatus,
+    nextStatus,
+  });
 
   return {
     success: true as const,
@@ -139,6 +147,7 @@ export async function trackCourierShipment(orderId: string) {
     trackingUrl: trackResult.trackingUrl ?? order.courierShipment.trackingUrl,
   };
 
+  const previousStatus = order.status;
   const mappedStatus = mapCourierStatusToOrderStatus(trackResult.status);
   const updateFields: Partial<Order> = {
     courierShipment: updatedShipment,
@@ -150,6 +159,15 @@ export async function trackCourierShipment(orderId: string) {
   }
 
   await orders.updateOne({ _id: objectId }, { $set: updateFields });
+
+  if (mappedStatus) {
+    queueOrderStatusSms({
+      orderId,
+      phone: order.phone,
+      previousStatus,
+      nextStatus: mappedStatus,
+    });
+  }
 
   return {
     success: true as const,

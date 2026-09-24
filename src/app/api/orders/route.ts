@@ -11,6 +11,7 @@ import { trackMetaPurchase } from "@/lib/meta/conversions";
 import { trackTikTokPurchase } from "@/lib/tiktok/conversions";
 import { validateOrderPayload } from "@/lib/orderValidation";
 import { DELIVERY_CHARGE } from "@/lib/products";
+import { queueOrderReceivedSms } from "@/lib/sms/orderNotifications";
 import type { CreateOrderPayload, Order } from "@/types/order";
 
 export async function POST(request: Request) {
@@ -97,11 +98,14 @@ export async function POST(request: Request) {
       createdAt: now,
       confirmedAt: now,
       smsSent: false,
+      smsNotifications: [],
       metaEventId,
     };
 
     const result = await orders.insertOne(order);
     const orderId = result.insertedId.toString();
+
+    queueOrderReceivedSms(orderId, phone);
 
     void trackMetaPurchase({
       eventId: metaEventId,

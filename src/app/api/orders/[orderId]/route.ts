@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/dbConnect";
-import { isSmsConfigured } from "@/lib/mimsms";
 import { getOrderItems, sumOrderQuantities } from "@/lib/orderItems";
 import { parseOrderId } from "@/lib/orderValidation";
+import { isOrderSmsConfigured } from "@/lib/sms/orderNotifications";
 import type { Order } from "@/types/order";
 
 type RouteContext = {
@@ -49,8 +49,10 @@ export async function GET(_request: Request, context: RouteContext) {
         total: order.total,
         phone: order.phone,
         status: order.status,
-        smsSent: Boolean(order.smsSent),
-        smsEnabled: isSmsConfigured(),
+        smsSent: Boolean(
+          order.smsSent || order.smsNotifications?.includes("order_received")
+        ),
+        smsEnabled: isOrderSmsConfigured(),
         createdAt: order.createdAt?.toISOString?.() ?? order.createdAt,
       },
     });

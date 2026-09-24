@@ -1,16 +1,20 @@
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/dbConnect";
-import { isSmsConfigured, sendOrderConfirmationSms } from "@/lib/mimsms";
 import { parseOrderId } from "@/lib/orderValidation";
+import {
+  isOrderSmsConfigured,
+  sendOrderNotificationSms,
+} from "@/lib/sms/orderNotifications";
 import type { Order } from "@/types/order";
 
 type RouteContext = {
   params: Promise<{ orderId: string }>;
 };
 
+/** Retry endpoint for order-received SMS (thank-you page). */
 export async function POST(_request: Request, context: RouteContext) {
   try {
-    if (!isSmsConfigured()) {
+    if (!isOrderSmsConfigured()) {
       return NextResponse.json({
         success: true,
         skipped: true,
@@ -38,7 +42,10 @@ export async function POST(_request: Request, context: RouteContext) {
       );
     }
 
-    if (order.smsSent) {
+    if (
+      order.smsSent ||
+      order.smsNotifications?.includes("order_received")
+    ) {
       return NextResponse.json({
         success: true,
         message: "আপনার ফোনে confirmation SMS ইতিমধ্যে পাঠানো হয়েছে।",
@@ -46,11 +53,10 @@ export async function POST(_request: Request, context: RouteContext) {
       });
     }
 
-    const smsResult = await sendOrderConfirmationSms(order.phone, {
-      fullName: order.fullName,
-      packageName: order.packageName,
-      total: order.total,
+    const smsResult = await sendOrderNotificationSms({
       orderId,
+      phone: order.phone,
+      notificationType: "order_received",
     });
 
     if (smsResult.skipped) {
@@ -58,6 +64,14 @@ export async function POST(_request: Request, context: RouteContext) {
         success: true,
         skipped: true,
         alreadySent: false,
+      });
+    }
+
+    if (smsResult.alreadySent) {
+      return NextResponse.json({
+        success: true,
+        message: "আপনার ফোনে confirmation SMS ইতিমধ্যে পাঠানো হয়েছে।",
+        alreadySent: true,
       });
     }
 
@@ -72,16 +86,6 @@ export async function POST(_request: Request, context: RouteContext) {
         { status: 502 }
       );
     }
-
-    await orders.updateOne(
-      { _id: objectId },
-      {
-        $set: {
-          smsSent: true,
-          smsSentAt: new Date(),
-        },
-      }
-    );
 
     return NextResponse.json({
       success: true,
